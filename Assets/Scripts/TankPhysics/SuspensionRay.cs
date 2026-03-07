@@ -18,8 +18,15 @@ public class SuspensionRay
         Vector3 worldDir = rb.transform.TransformDirection(direction);
 
         // 1. Стреляем лучом
-        if (Physics.Raycast(worldOrigin, worldDir, out hit, maxLen, layerMask))
+        if (Physics.Raycast(worldOrigin, worldDir, out hit, maxLen, layerMask, QueryTriggerInteraction.Ignore))
         {
+            // Дополнительная проверка: если луч попал в коллайдер самого танка (на всякий случай)
+            if (hit.collider.transform.root == rb.transform.root)
+            {
+                hasCollision = false;
+                return;
+            }
+
             // 2. ПРОВЕРКА УГЛА: Если это стена (> 50 градусов), игнорируем её
             float groundAngle = Vector3.Angle(hit.normal, Vector3.up);
             if (groundAngle > MAX_SLOPE_ANGLE)

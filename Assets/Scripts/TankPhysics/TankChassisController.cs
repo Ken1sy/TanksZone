@@ -30,12 +30,15 @@ public class TankChassisController : MonoBehaviour
     public float sideRollFactor = 8000f;
 
     [Header("Mode")]
-    public bool driftMode=false;
+    public bool driftMode = false;
     public float driftIntensity = 0.15f;
 
     [Header("Track Visuals")]
     public TrackBlendShapeAnimator leftTrackAnim;
     public TrackBlendShapeAnimator rightTrackAnim;
+
+    [Tooltip("Tracks Air Acceleration")]
+    public float trackAirAcceleration = 50f;
 
     [Header("Debug Gizmos")]
     public bool showGizmos = true;
@@ -45,6 +48,8 @@ public class TankChassisController : MonoBehaviour
     private TankTrack rightTrack = new TankTrack();
     private Vector2 inputDirection;
     private float currentEngineForceMag = 0f;
+    private float currentLeftAnimSpeed;
+    private float currentRightAnimSpeed;
 
     void Awake()
     {
@@ -65,6 +70,9 @@ public class TankChassisController : MonoBehaviour
     {
         leftTrack.UpdateTracks(rb, maxRayLength, nominalRayLength, springStiffness, damping, groundLayer);
         rightTrack.UpdateTracks(rb, maxRayLength, nominalRayLength, springStiffness, damping, groundLayer);
+
+        UpdateTrackAnimations();
+
         int totalContacts = leftTrack.numContacts + rightTrack.numContacts;
         if (totalContacts == 0) return;
 
@@ -76,7 +84,7 @@ public class TankChassisController : MonoBehaviour
         ApplySideRoll(contactFactor);
         ApplyAntiDrift(contactFactor);
         ApplyWobble(contactFactor);
-        UpdateTrackAnimations();
+
     }
 
     private void ApplyLocomotion(int contactFactor)
@@ -145,8 +153,8 @@ public class TankChassisController : MonoBehaviour
     {
         if (leftTrackAnim == null || rightTrackAnim == null) return;
 
-        float leftTrackSpeed = 0f;
-        float rightTrackSpeed = 0f;
+        float targetLeftSpeed = 0f;
+        float targetRightSpeed = 0f;
 
         #region old
         //// 1. Получаем локальную скорость танка (вперед/назад)
@@ -165,33 +173,42 @@ public class TankChassisController : MonoBehaviour
 
         Debug.Log("l Contacts: " + leftTrack.numContacts + " | r Contacts: " + rightTrack.numContacts);
 
-        // ПРОВЕРКА: Если танк касается земли хотя бы одним лучом
-        if (leftTrack.numContacts >= 0 || rightTrack.numContacts >= 0)
+        if (leftTrack.numContacts > 0 || rightTrack.numContacts > 0)
         {
             // Используем реальную физику для точности
             float localForwardSpeed = transform.InverseTransformDirection(rb.linearVelocity).z;
             float rotationSpeed = rb.angularVelocity.y * (trackSeparation / 2f);
 
-            leftTrackSpeed = localForwardSpeed + rotationSpeed;
-            rightTrackSpeed = localForwardSpeed - rotationSpeed;
+            targetLeftSpeed = localForwardSpeed + rotationSpeed;
+            targetRightSpeed = localForwardSpeed - rotationSpeed;
+
+            currentLeftAnimSpeed = targetLeftSpeed;
+            currentRightAnimSpeed = targetRightSpeed;
         }
         else
         {
-            // Если в воздухе или перевернуты — крутим на основе ввода (Input)
-            // moveInput и turnInput — это твои переменные из OnMove (Vector2)
             float forwardInput = inputDirection.y;
             float turnInput = inputDirection.x;
 
-            // Эмулируем скорость на основе максимальной скорости танка
-            leftTrackSpeed = (forwardInput + turnInput) * speed;
-            rightTrackSpeed = (forwardInput - turnInput) * speed;
+            targetLeftSpeed = (forwardInput + turnInput) * speed;
+            targetRightSpeed = (forwardInput - turnInput) * speed;
 
-            Debug.Log("leftspeed: " + leftTrackSpeed + " | rightspeed: " + rightTrackSpeed);
+            currentLeftAnimSpeed = Mathf.MoveTowards(
+                currentLeftAnimSpeed,
+                targetLeftSpeed,
+                trackAirAcceleration * Time.deltaTime
+            );
+
+            currentRightAnimSpeed = Mathf.MoveTowards(
+                currentRightAnimSpeed,
+                targetRightSpeed,
+                trackAirAcceleration * Time.deltaTime
+            );
         }
 
         // 4. Передаем скорости в аниматоры
-        leftTrackAnim.UpdateTrackAnimation(leftTrackSpeed);
-        rightTrackAnim.UpdateTrackAnimation(leftTrackSpeed);
+        leftTrackAnim.UpdateTrackAnimation(currentLeftAnimSpeed);
+        rightTrackAnim.UpdateTrackAnimation(currentRightAnimSpeed);
     }
 
     #region Gizmos
