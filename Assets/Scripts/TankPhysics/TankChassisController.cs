@@ -156,26 +156,8 @@ public class TankChassisController : MonoBehaviour
         float targetLeftSpeed = 0f;
         float targetRightSpeed = 0f;
 
-        #region old
-        //// 1. ѕолучаем локальную скорость танка (вперед/назад)
-        //float localForwardSpeed = transform.InverseTransformDirection(rb.linearVelocity).z;
-
-        //// 2. ѕолучаем угловую скорость (поворот вокруг оси Y)
-        //// rb.angularVelocity.y в радианах в секунду
-        //float rotationSpeed = rb.angularVelocity.y * (trackSeparation / 2f);
-
-        //// 3. –ассчитываем итоговую скорость дл€ каждой стороны
-        //// ѕри повороте направо (angularVelocity.y > 0) лева€ гусеница едет быстрее вперед, 
-        //// а права€ Ч медленнее или назад.
-        //float leftSpeed = localForwardSpeed + rotationSpeed;
-        //float rightSpeed = localForwardSpeed - rotationSpeed;
-        #endregion
-
-        Debug.Log("l Contacts: " + leftTrack.numContacts + " | r Contacts: " + rightTrack.numContacts);
-
         if (leftTrack.numContacts > 0 || rightTrack.numContacts > 0)
         {
-            // »спользуем реальную физику дл€ точности
             float localForwardSpeed = transform.InverseTransformDirection(rb.linearVelocity).z;
             float rotationSpeed = rb.angularVelocity.y * (trackSeparation / 2f);
 
@@ -206,7 +188,6 @@ public class TankChassisController : MonoBehaviour
             );
         }
 
-        // 4. ѕередаем скорости в аниматоры
         leftTrackAnim.UpdateTrackAnimation(currentLeftAnimSpeed);
         rightTrackAnim.UpdateTrackAnimation(currentRightAnimSpeed);
     }

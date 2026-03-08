@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class TurretRotaion : MonoBehaviour
+public class TurretController : MonoBehaviour
 {
     [Header("Rotation Settings")]
     public float maxSpeed = 80f;
