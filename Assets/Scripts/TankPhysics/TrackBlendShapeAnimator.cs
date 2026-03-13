@@ -1,10 +1,11 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TrackBlendShapeAnimator : MonoBehaviour
 {
     [Header("Settings")]
-    public SkinnedMeshRenderer trackRenderer;
     public int blendShapeIndex = 0;
+    public SkinnedMeshRenderer trackRenderer;
 
     [Tooltip("Длина одного сегмента гусеницы(m)")]
     public float segmentLength = 0.209188f;

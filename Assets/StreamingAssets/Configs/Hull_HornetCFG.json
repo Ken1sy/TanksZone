@@ -1,0 +1,24 @@
+{
+    "speed": 30.0,
+    "acceleration": 8.0,
+    "reverseAcceleration": 8.0,
+    "brakingDeceleration": 12.0,
+    "turnSpeed": 110.0,
+    "turnAcceleration": 350.0,
+    "sideAcceleration": 40.0,
+    "weight": 1500.0,
+    "damping": 1500.0,
+
+    "suspensionRayOffsetY": 0.1,
+    "maxRayLength": 0.43,
+    "nominalRayLength": 0.0,
+    "raysPerTrack": 5,
+    "trackSeparation": 2.7,
+    "trackLength": 5.0,
+    "springStiffness": 30000.0,
+	
+    "wobbleFactor": 500000.0,
+    "sideRollFactor": 20000.0,
+    "driftIntensity": 0.01,
+    "trackAirAcceleration": 50.0
+}

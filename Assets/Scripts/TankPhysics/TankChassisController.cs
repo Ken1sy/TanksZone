@@ -4,44 +4,37 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody))]
 public class TankChassisController : MonoBehaviour
 {
-    [Header("Parameters")]
-    public float speed = 33f;
-    public float acceleration = 60f;
-    public float reverseAcceleration = 60f;
-    public float brakingDeceleration = 110f;
-    public float turnSpeed = 110f;
-    public float turnAcceleration = 300f;
-    public float sideAcceleration = 40f;
-    public float weight = 1500f;
-    public float damping = 1500f;
-
-    [Header("Suspension Config")]
-    public float suspensionRayOffsetY = 0.1f;
-    public float maxRayLength = 0.43f;
-    public float nominalRayLength = 0f;
-    public int raysPerTrack = 5;
-    public float trackSeparation = 2.7f;
-    public float trackLength = 5f;
-    public float springStiffness = 30000f;
+    [Header("Ground Collision")]
     public LayerMask groundLayer;
-
-    [Header("Arcade Wobble (Fake)")]
-    public float wobbleFactor = 40000f;
-    public float sideRollFactor = 8000f;
 
     [Header("Mode")]
     public bool driftMode = false;
-    public float driftIntensity = 0.15f;
-
-    [Header("Track Visuals")]
-    public TrackBlendShapeAnimator leftTrackAnim;
-    public TrackBlendShapeAnimator rightTrackAnim;
-
-    [Tooltip("Tracks Air Acceleration")]
-    public float trackAirAcceleration = 50f;
 
     [Header("Debug Gizmos")]
     public bool showGizmos = true;
+
+    private float speed;
+    private float acceleration;
+    private float reverseAcceleration;
+    private float brakingDeceleration;
+    private float turnSpeed;
+    private float turnAcceleration;
+    private float sideAcceleration;
+    private float weight;
+    private float damping;
+
+    private float suspensionRayOffsetY;
+    private float maxRayLength;
+    private float nominalRayLength;
+    private int raysPerTrack;
+    private float trackSeparation;
+    private float trackLength;
+    private float springStiffness;
+
+    private float wobbleFactor;
+    private float sideRollFactor;
+    private float driftIntensity;
+    private float trackAirAcceleration;
 
     private Rigidbody rb;
     private TankTrack leftTrack = new TankTrack();
@@ -50,9 +43,36 @@ public class TankChassisController : MonoBehaviour
     private float currentEngineForceMag = 0f;
     private float currentLeftAnimSpeed;
     private float currentRightAnimSpeed;
+    private TrackBlendShapeAnimator leftTrackAnim;
+    private TrackBlendShapeAnimator rightTrackAnim;
 
-    void Awake()
+    public void OnMove(InputAction.CallbackContext context) => inputDirection = context.ReadValue<Vector2>();
+
+    public void ApplySettings(TankSettings settings)
     {
+        if (settings == null) return;
+
+        this.speed = settings.speed;
+        this.acceleration = settings.acceleration;
+        this.reverseAcceleration = settings.reverseAcceleration;
+        this.brakingDeceleration = settings.brakingDeceleration;
+        this.turnSpeed = settings.turnSpeed;
+        this.turnAcceleration = settings.turnAcceleration;
+        this.sideAcceleration = settings.sideAcceleration;
+        this.weight = settings.weight;
+        this.damping = settings.damping;
+        this.suspensionRayOffsetY = settings.suspensionRayOffsetY;
+        this.maxRayLength = settings.maxRayLength;
+        this.nominalRayLength = settings.nominalRayLength;
+        this.raysPerTrack = settings.raysPerTrack;
+        this.trackSeparation = settings.trackSeparation;
+        this.trackLength = settings.trackLength;
+        this.springStiffness = settings.springStiffness;
+        this.wobbleFactor = settings.wobbleFactor;
+        this.sideRollFactor = settings.sideRollFactor;
+        this.driftIntensity = settings.driftIntensity;
+        this.trackAirAcceleration = settings.trackAirAcceleration;
+
         rb = GetComponent<Rigidbody>();
         rb.mass = weight;
         rb.linearDamping = 0.1f;
@@ -64,7 +84,11 @@ public class TankChassisController : MonoBehaviour
         rightTrack.Initialize(raysPerTrack, trackSeparation / 2, trackLength, suspensionRayOffsetY);
     }
 
-    public void OnMove(InputAction.CallbackContext context) => inputDirection = context.ReadValue<Vector2>();
+    public void SetTrackAnimators(TrackBlendShapeAnimator lTracks, TrackBlendShapeAnimator rTracks)
+    {
+        leftTrackAnim = lTracks;
+        rightTrackAnim = rTracks;
+    }
 
     void FixedUpdate()
     {

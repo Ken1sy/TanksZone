@@ -10,7 +10,7 @@ public class SuspensionRay
     private float lastCompression;
 
     // Добавляем лимит угла наклона (чтобы не ездить по стенам)
-    private const float MAX_SLOPE_ANGLE = 50f;
+    private const float MAX_SLOPE_ANGLE = 65f;
 
     public void UpdatePhysics(Rigidbody rb, Vector3 direction, float maxLen, float nominalLen, float springStiffness, float damping, LayerMask layerMask)
     {

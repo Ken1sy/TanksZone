@@ -35,8 +35,6 @@ public class TankDebugControls : MonoBehaviour
     private void TeleportUp()
     {
         rb.position += Vector3.up * teleportHeight;
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
     }
 
     private void ResetRotation()

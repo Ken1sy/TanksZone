@@ -5,8 +5,8 @@ public class TurretController : MonoBehaviour
 {
     [Header("Rotation Settings")]
     public float maxSpeed = 80f;
-    public float acceleration = 120f;
-    public float deceleration = 150f;
+    public float acceleration = 720f;
+    public float deceleration = 750f;
 
     [Header("State")]
     public bool canMove = true;
