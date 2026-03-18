@@ -35,6 +35,7 @@ public class TankChassisController : MonoBehaviour
     private float sideRollFactor;
     private float driftIntensity;
     private float trackAirAcceleration;
+    private float trackAirSpeed;
 
     private Rigidbody rb;
     private TankTrack leftTrack = new TankTrack();
@@ -72,6 +73,7 @@ public class TankChassisController : MonoBehaviour
         this.sideRollFactor = settings.sideRollFactor;
         this.driftIntensity = settings.driftIntensity;
         this.trackAirAcceleration = settings.trackAirAcceleration;
+        this.trackAirSpeed = settings.trackAirSpeed;
 
         rb = GetComponent<Rigidbody>();
         rb.mass = weight;
@@ -196,8 +198,8 @@ public class TankChassisController : MonoBehaviour
             float forwardInput = inputDirection.y;
             float turnInput = inputDirection.x;
 
-            targetLeftSpeed = (forwardInput + turnInput) * speed;
-            targetRightSpeed = (forwardInput - turnInput) * speed;
+            targetLeftSpeed = (forwardInput + turnInput) * trackAirSpeed;
+            targetRightSpeed = (forwardInput - turnInput) * trackAirSpeed;
 
             currentLeftAnimSpeed = Mathf.MoveTowards(
                 currentLeftAnimSpeed,

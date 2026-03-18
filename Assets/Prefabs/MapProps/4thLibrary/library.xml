@@ -1,0 +1,15 @@
+<library name="4th Library">
+
+            
+
+	<prop-group name="Pirs">
+		
+		<prop name="Pirs">
+				<mesh  file="brid_2.3ds">
+				<texture name="Wood" diffuse-map="brid_2v4.jpg" />
+		</mesh>
+		</prop>
+		
+	</prop-group>
+
+</library>

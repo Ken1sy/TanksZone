@@ -25,4 +25,5 @@ public class TankSettings
     public float sideRollFactor;
     public float driftIntensity;
     public float trackAirAcceleration;
+    public float trackAirSpeed;
 }

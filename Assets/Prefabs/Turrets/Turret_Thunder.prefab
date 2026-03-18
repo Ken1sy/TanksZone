@@ -323,8 +323,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponController
   muzzlePoint: {fileID: 3674021876931706254}
   projectilePrefab: {fileID: 1186015061091877566, guid: 3962fc05773f7894d9da2a53516a17f0, type: 3}
-  fireRate: 1.5
-  recoilForce: 2500
+  fireRate: 0.5
+  recoilForce: 5500
 --- !u!114 &2267986283283950463
 MonoBehaviour:
   m_ObjectHideFlags: 0

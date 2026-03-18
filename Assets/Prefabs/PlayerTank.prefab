@@ -238,6 +238,7 @@ GameObject:
   - component: {fileID: 8712304517883703079}
   - component: {fileID: 8504597825350225158}
   - component: {fileID: 849799110935254400}
+  - component: {fileID: 5088387405813872005}
   m_Layer: 9
   m_Name: Hull
   m_TagString: Tank
@@ -322,30 +323,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9224828c21c7e3840b676e336f0aaceb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankChassisController
-  speed: 30
-  acceleration: 8
-  reverseAcceleration: 8
-  brakingDeceleration: 12
-  turnSpeed: 110
-  turnAcceleration: 350
-  sideAcceleration: 40
-  weight: 1500
-  damping: 1500
-  suspensionRayOffsetY: 0.1
-  maxRayLength: 0.43
-  nominalRayLength: 0
-  raysPerTrack: 5
-  trackSeparation: 2.7
-  trackLength: 5
-  springStiffness: 30000
   groundLayer:
     serializedVersion: 2
     m_Bits: 2560
-  wobbleFactor: 500000
-  sideRollFactor: 20000
-  driftMode: 0
-  driftIntensity: 0.01
-  trackAirAcceleration: 50
+  driftMode: 1
   showGizmos: 0
 --- !u!114 &8504597825350225158
 MonoBehaviour:
@@ -359,7 +340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7924ffb845509364092b8223812c0862, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankDebugControls
-  teleportHeight: 5
+  teleportHeight: 8
 --- !u!114 &849799110935254400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -438,6 +419,18 @@ MonoBehaviour:
   m_DefaultActionMap: Gameplay
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &5088387405813872005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6856245475929774849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03cbadb197e182e4eafcdcc061a722d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::JsonHotReloader
 --- !u!1 &7562596486293455013
 GameObject:
   m_ObjectHideFlags: 0
@@ -517,14 +510,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   cameraObject: {fileID: 6937149614666844391}
   defaultPosition: {fileID: 3779179063718918759}
-  smoothing: 5
-  rotSmoothing: 3
+  smoothing: 10
+  rotSmoothing: 5
   moveSpeed: 3
-  maxDistance: 9
-  groundLayer:
+  collisionLayer:
     serializedVersion: 2
     m_Bits: 2048
+  cameraRadius: 0.3
+  collisionOffset: 0.1
   follow: 1
   spectatorMode: 0
-  snowEffect: {fileID: 0}
-  rainObject: {fileID: 0}

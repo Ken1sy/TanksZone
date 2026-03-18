@@ -97,7 +97,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   speed: 200
   lifetime: 3
-  impactForce: 1500
+  impactForce: 3000
 --- !u!1 &7485814782267251363
 GameObject:
   m_ObjectHideFlags: 0
