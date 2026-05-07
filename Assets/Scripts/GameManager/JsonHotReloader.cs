@@ -14,7 +14,7 @@ public class JsonHotReloader : MonoBehaviour
 
         // Формируем путь к файлу (например, Hornet.json)
         // Если вы используете TankSetupData для выбора корпуса:
-        string fileName = TankSetupData.SelectedHullID + "CFG" + ".json";
+        string fileName = TankSetupData.SelectedHullID + ".cfg";
         filePath = Path.Combine(Application.streamingAssetsPath, "Configs", fileName);
 
         if (File.Exists(filePath))

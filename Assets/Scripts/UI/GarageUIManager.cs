@@ -4,9 +4,14 @@ using UnityEngine.SceneManagement;
 public class GarageUIManager : MonoBehaviour
 {
     [Header("Настройки сцен")]
-    [Tooltip("Точное название сцены с картой битвы")]
     public string battleSceneName = "BattleScene";
 
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Time.timeScale = 1f;
+    }
     public void StartBattle()
     {
         Debug.Log("Загрузка карты битвы...");

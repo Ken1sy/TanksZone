@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dac601e5b1e36748b79eb4a3397f5d6, type: 3}
+  m_Name: hulk_Config
+  m_EditorClassIdentifier: Assembly-CSharp::TankSkinConfig
+  skinId: hulk
+  skinTexture: {fileID: 2800000, guid: 95c196fb7682eb84385a31c1130d2715, type: 3}
+  previewTexture: {fileID: 2800000, guid: 8264da4d1597ab44dbeba86fe0715987, type: 3}
+  tiling: {x: 5, y: 5}

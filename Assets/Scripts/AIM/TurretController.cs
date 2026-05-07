@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class TurretController : MonoBehaviour
 {
@@ -11,31 +10,39 @@ public class TurretController : MonoBehaviour
     [Header("State")]
     public bool canMove = true;
 
-    private float currentSpeed = 0f;
-    private float inputDirection = 0f;
-
-    public void OnTurretRotate(InputAction.CallbackContext context) => inputDirection = context.ReadValue<float>();
+    private Transform _cameraTransform;
+    private bool _isTurretLocked = false;
 
     private void Update()
     {
-        if (!canMove) return;
+        if (!canMove || _cameraTransform == null || _isTurretLocked) return;
 
         HandleRotation();
     }
+
+    public void SetCamTransform(Transform cameraTransform)
+    {
+        if (cameraTransform == null) return;
+        _cameraTransform = cameraTransform;
+    }
+
+    public void SetTurretLock(bool isLocked)
+    {
+        _isTurretLocked = isLocked;
+    }
+
     private void HandleRotation()
     {
-        if (Mathf.Abs(inputDirection) > 0.1f)
+        Vector3 cameraForward = _cameraTransform.forward;
+        Vector3 targetDirection = Vector3.ProjectOnPlane(cameraForward, transform.parent.up).normalized;
+        float angleToTarget = Vector3.SignedAngle(transform.forward, targetDirection, transform.parent.up);
+
+        float step = maxSpeed * Time.deltaTime;
+        if (step > Mathf.Abs(angleToTarget))
         {
-            float targetVel = inputDirection * maxSpeed;
-            currentSpeed = Mathf.MoveTowards(currentSpeed, targetVel, acceleration * Time.deltaTime);
+            step = Mathf.Abs(angleToTarget);
         }
-        else
-        {
-            currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.deltaTime);
-        }
-        if (Mathf.Abs(currentSpeed) > 0.01f)
-        {
-            transform.Rotate(0f, currentSpeed * Time.deltaTime, 0f, Space.Self);
-        }
+
+        transform.Rotate(0f, step * Mathf.Sign(angleToTarget), 0f, Space.Self);
     }
 }

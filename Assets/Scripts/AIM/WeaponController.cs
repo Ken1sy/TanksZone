@@ -1,94 +1,176 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using static UnityEngine.GraphicsBuffer;
 
 namespace GameScripts.AIM
 {
     public class WeaponController : MonoBehaviour
     {
+        [Header("State")]
+        public bool isLocalPlayer = false;
+
         [Header("References")]
-        public Transform muzzlePoint;
-        public GameObject projectilePrefab;
-
-        [Header("Weapon Stats")]
-        public float fireRate = 1.5f;
-        public float recoilForce = 2000f;
-
-        private Rigidbody tankRigidbody;
+        public LayerMask hitMask = ~0;
+        private Transform muzzlePoint;
         private SmartAim smartAim;
-        private Vector3 lastShotStart;
-        private Vector3 lastShotEnd;
-        private bool hasLastShot = false;
-        private float nextFireTime = 0f;
+        private Rigidbody tankRigidbody;
+        private UnityEngine.Camera mainCamera;
+
+        [Header("Shooting Stats")]
+        public float damage = 50f;
+        public float range = 1000f;
+        public float impactForce = 7000f;
+        public float recoilForce = 3000f;
+
+        [Header("Visual Effects")]
+        public GameObject hitEffectPrefab;
+        public GameObject muzzleFlashPrefab;
+        public GameObject decalPrefab;
 
         private void Start()
         {
-            tankRigidbody = GetComponentInParent<Rigidbody>();
             smartAim = GetComponent<SmartAim>();
+            tankRigidbody = GetComponentInParent<Rigidbody>();
+            mainCamera = UnityEngine.Camera.main;
         }
 
-        public void OnShoot(InputAction.CallbackContext context) { if (context.started) TryShoot(); }
-
-        void TryShoot()
+        public void SetMuzzlePoint(Transform muzzle)
         {
-            if (Time.time < nextFireTime) return;
+            muzzlePoint = muzzle;
+        }
 
-            if (muzzlePoint == null) Debug.Log("muzzlePoint is null from WeaponController");
-            Vector3 aimDirection = smartAim.GetAimDirection(transform, muzzlePoint, out bool isBlocked);
-
-            // 3. Устанавливаем кулдаун
-            nextFireTime = Time.time + (1f / fireRate);
-
-            // 1. ФИЗИЧЕСКАЯ ОТДАЧА (Всегда срабатывает)
-            if (tankRigidbody != null)
+        private void Update()
+        {
+            if (isLocalPlayer)
             {
-                tankRigidbody.AddForceAtPosition(-muzzlePoint.forward * recoilForce, muzzlePoint.position, ForceMode.Impulse);
+                UpdateCrosshairPosition();
             }
+        }
 
-            // 2. Проверяем блокировку ствола
-            if (isBlocked)
+        private void UpdateCrosshairPosition()
+        {
+            if (muzzlePoint == null || CrosshairUI.Instance == null || mainCamera == null) return;
+
+            bool isCursorFree = Cursor.visible || Cursor.lockState == CursorLockMode.None;
+            if (isCursorFree)
             {
-                Debug.Log("Выстрел заблокирован: ствол находится в стене!");
+                CrosshairUI.Instance.UpdateCrosshair(Vector3.zero, false, true);
                 return;
             }
 
-            // 2. ФИКСАЦИЯ ДЛЯ GIZMOS
-            lastShotStart = muzzlePoint.position;
-            if (Physics.Raycast(muzzlePoint.position, aimDirection, out RaycastHit hit, 200f, smartAim.targetLayer | smartAim.obstacleLayer))
+            Vector3 aimDirection = smartAim.GetAimDirection(transform, muzzlePoint, out bool isBlocked).normalized;
+            Vector3 targetPoint;
+
+            if (Physics.Raycast(muzzlePoint.position, aimDirection, out RaycastHit hit, range, hitMask))
             {
-                lastShotEnd = hit.point;
+                targetPoint = hit.point;
             }
             else
             {
-                lastShotEnd = muzzlePoint.position + aimDirection * 100f;
+                targetPoint = muzzlePoint.position + aimDirection * range;
             }
-            hasLastShot = true;
 
-            // 3. СОЗДАНИЕ СНАРЯДА
-            // Если ствол заблокирован, мы можем создать эффект взрыва прямо в дуле
+            Vector3 screenPos = mainCamera.WorldToScreenPoint(targetPoint);
+            CrosshairUI.Instance.UpdateCrosshair(screenPos, isBlocked, false);
+        }
+
+        public void TryShoot()
+        {
+            if (muzzlePoint == null) return;
+
+            Vector3 aimDirection = smartAim.GetAimDirection(transform, muzzlePoint, out bool isBlocked).normalized;
+
+            ShowMuzzleFlash();
+
             if (isBlocked)
             {
-                Debug.Log("Выстрел в упор или внутри объекта!");
-                // Можно заспавнить эффект взрыва в muzzlePoint.position и не создавать снаряд
-                // Или создать снаряд, который мгновенно столкнется
+                Vector3 impactPos = muzzlePoint.position;
+                Vector3 impactNormal = -muzzlePoint.forward;
+                Transform targetTransform = null;
+
+                if (Physics.Linecast(transform.position, muzzlePoint.position, out RaycastHit blockHit, hitMask))
+                {
+                    impactPos = blockHit.point + blockHit.normal * 0.02f;
+                    impactNormal = blockHit.normal;
+                    targetTransform = blockHit.collider.transform;
+                }
+
+                if (hitEffectPrefab != null)
+                {
+                    Instantiate(hitEffectPrefab, impactPos, Quaternion.LookRotation(impactNormal));
+                }
+
+                if (decalPrefab != null && targetTransform != null)
+                {
+                    GameObject decal = Instantiate(decalPrefab, impactPos, Quaternion.LookRotation(-impactNormal));
+                    decal.transform.SetParent(targetTransform);
+                    decal.transform.Rotate(0, 0, Random.Range(0f, 360f), Space.Self);
+                    Destroy(decal, 10f);
+                }
+
+                // Вызываем отдачу без передачи aimDirection
+                ApplyRecoil();
+                return;
             }
 
-            Instantiate(projectilePrefab, muzzlePoint.position, Quaternion.LookRotation(aimDirection));
+            PerformRaycastShot(aimDirection);
+
+            // Вызываем отдачу без передачи aimDirection
+            ApplyRecoil();
         }
-        private void OnDrawGizmos()
+
+        private void PerformRaycastShot(Vector3 direction)
         {
-            if (muzzlePoint == null || smartAim == null || !smartAim.showGizmos) return;
+            Vector3 hitPosition;
 
-            if (hasLastShot)
+            if (Physics.Raycast(muzzlePoint.position, direction, out RaycastHit hit, range, hitMask))
             {
-                // Рисуем линию последнего выстрела
-                Gizmos.color = Color.cyan;
-                Gizmos.DrawLine(lastShotStart, lastShotEnd);
+                hitPosition = hit.point;
 
-                // Рисуем точку попадания
-                Gizmos.color = Color.red;
-                Gizmos.DrawSphere(lastShotEnd, 0.15f);
+                if (hitEffectPrefab != null)
+                {
+                    Instantiate(hitEffectPrefab, hitPosition, Quaternion.LookRotation(hit.normal));
+                }
+
+                if (decalPrefab != null)
+                {
+                    Vector3 safePosition = hitPosition + hit.normal * 0.02f;
+                    GameObject decal = Instantiate(decalPrefab, safePosition, Quaternion.LookRotation(-hit.normal));
+                    decal.transform.SetParent(hit.collider.transform);
+                    decal.transform.Rotate(0, 0, Random.Range(0f, 360f), Space.Self);
+                    Destroy(decal, 10f);
+                }
+
+                Rigidbody targetRb = hit.collider.attachedRigidbody;
+
+                if (targetRb != null && targetRb != tankRigidbody)
+                {
+                    targetRb.AddForceAtPosition(direction * impactForce, hitPosition, ForceMode.Impulse);
+                }
             }
+            else
+            {
+                hitPosition = muzzlePoint.position + direction * range;
+            }
+        }
+
+        private void ShowMuzzleFlash()
+        {
+            if (muzzleFlashPrefab != null && muzzlePoint != null)
+            {
+                Instantiate(muzzleFlashPrefab, muzzlePoint.position, muzzlePoint.rotation, muzzlePoint);
+            }
+        }
+
+        private void ApplyRecoil()
+        {
+            if (tankRigidbody == null || muzzlePoint == null) return;
+
+            // 1. Направление отдачи ВСЕГДА строго назад относительно самого ствола
+            Vector3 recoilDirection = -muzzlePoint.forward;
+
+            // 2. Возвращаем AddForceAtPosition. 
+            // Теперь сила снова бьет высоко в дуло, создавая рычаг и реалистичный крен,
+            // но так как вектор правильный, танк больше не будет делать сальто.
+            tankRigidbody.AddForceAtPosition(recoilDirection * recoilForce, muzzlePoint.position, ForceMode.Impulse);
         }
     }
 }

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 public class TankChassisController : MonoBehaviour
@@ -34,20 +33,22 @@ public class TankChassisController : MonoBehaviour
     private float wobbleFactor;
     private float sideRollFactor;
     private float driftIntensity;
-    private float trackAirAcceleration;
-    private float trackAirSpeed;
+
+    private float currentLeftAnimSpeed;
+    private float currentRightAnimSpeed;
+    private TrackUVAnimator leftTrackAnim;
+    private TrackUVAnimator rightTrackAnim;
 
     private Rigidbody rb;
     private TankTrack leftTrack = new TankTrack();
     private TankTrack rightTrack = new TankTrack();
     private Vector2 inputDirection;
     private float currentEngineForceMag = 0f;
-    private float currentLeftAnimSpeed;
-    private float currentRightAnimSpeed;
-    private TrackBlendShapeAnimator leftTrackAnim;
-    private TrackBlendShapeAnimator rightTrackAnim;
 
-    public void OnMove(InputAction.CallbackContext context) => inputDirection = context.ReadValue<Vector2>();
+    public void SetMoveInput(Vector2 input)
+    {
+        inputDirection = input;
+    }
 
     public void ApplySettings(TankSettings settings)
     {
@@ -72,24 +73,15 @@ public class TankChassisController : MonoBehaviour
         this.wobbleFactor = settings.wobbleFactor;
         this.sideRollFactor = settings.sideRollFactor;
         this.driftIntensity = settings.driftIntensity;
-        this.trackAirAcceleration = settings.trackAirAcceleration;
-        this.trackAirSpeed = settings.trackAirSpeed;
 
         rb = GetComponent<Rigidbody>();
         rb.mass = weight;
         rb.linearDamping = 0.1f;
         rb.angularDamping = 0f;
-        rb.automaticCenterOfMass = false;
-        rb.centerOfMass = new Vector3(0, 0.5f, 0);
+        rb.automaticCenterOfMass = true;
 
         leftTrack.Initialize(raysPerTrack, -trackSeparation / 2, trackLength, suspensionRayOffsetY);
         rightTrack.Initialize(raysPerTrack, trackSeparation / 2, trackLength, suspensionRayOffsetY);
-    }
-
-    public void SetTrackAnimators(TrackBlendShapeAnimator lTracks, TrackBlendShapeAnimator rTracks)
-    {
-        leftTrackAnim = lTracks;
-        rightTrackAnim = rTracks;
     }
 
     void FixedUpdate()
@@ -108,28 +100,38 @@ public class TankChassisController : MonoBehaviour
         ApplyLocomotion(totalContacts);
         ApplyRotation(contactFactor);
         ApplySideRoll(contactFactor);
-        ApplyAntiDrift(contactFactor);
+        ApplyFriction(contactFactor);
         ApplyWobble(contactFactor);
-
     }
 
-    private void ApplyLocomotion(int contactFactor)
+    private void ApplyLocomotion(float contactFactor)
     {
-        float targetSpeed = inputDirection.y * speed;
+        // 1. Сохраняем фикс диагонального движения (чтобы скорость не падала в поворотах)
+        float gasInput = inputDirection.y;
+        if (Mathf.Abs(inputDirection.x) > 0.01f && Mathf.Abs(gasInput) > 0.01f)
+        {
+            gasInput = gasInput / Mathf.Max(Mathf.Abs(inputDirection.x), Mathf.Abs(gasInput));
+        }
+
+        float targetSpeed = gasInput * speed;
         float currentForwardSpeed = Vector3.Dot(rb.linearVelocity, transform.forward);
         float usedAccel = 0f;
-        if (Mathf.Abs(inputDirection.y) < 0.01f)
-        {
 
-            if (Mathf.Abs(currentForwardSpeed) < 0.5f)
+        bool isParking = false; // Флаг: включился ли ручник?
+
+        if (Mathf.Abs(gasInput) < 0.01f)
+        {
+            if (Mathf.Abs(currentForwardSpeed) < 0.1f)
             {
                 targetSpeed = 0f;
-                usedAccel = acceleration * 5f;
+                // ВОЗВРАЩАЕМ жесткий тормоз: он идеально держит танк на месте от микро-скатываний
+                usedAccel = brakingDeceleration * 5f;
+                isParking = true;
             }
             else
             {
                 targetSpeed = 0f;
-                usedAccel = brakingDeceleration;
+                usedAccel = brakingDeceleration; // Плавное торможение накатом
             }
         }
         else
@@ -137,17 +139,48 @@ public class TankChassisController : MonoBehaviour
             bool isAccelerating = Mathf.Sign(targetSpeed) == Mathf.Sign(currentForwardSpeed);
             usedAccel = isAccelerating ? acceleration : reverseAcceleration;
         }
+
         float forceMag = (targetSpeed - currentForwardSpeed) * weight * usedAccel * Time.fixedDeltaTime;
-        currentEngineForceMag = forceMag;
+
+        // ========================================================
+        // 2. ИСПРАВЛЕНИЕ КЛЕВКА (Прячем ручник от скрипта Wobble)
+        // ========================================================
+        if (isParking)
+        {
+            // Если танк почти остановился, мы плавно гасим визуальную раскачку в ноль.
+            // Скрипт Wobble ничего не узнает о резком ручнике, и танк не клюнет носом!
+            currentEngineForceMag = Mathf.Lerp(currentEngineForceMag, 0f, 10f * Time.fixedDeltaTime);
+        }
+        else
+        {
+            // В обычном движении передаем силу для раскачки как есть
+            currentEngineForceMag = forceMag;
+        }
+
+        // Применяем саму силу движения к физике
         Vector3 force = transform.forward * (forceMag * contactFactor);
         rb.AddForce(force, ForceMode.Force);
     }
 
     private void ApplyRotation(float contactFactor)
     {
-        float targetAngularVel = inputDirection.x * (turnSpeed * Mathf.Deg2Rad);
+        float turnInput = inputDirection.x;
+
+        // Читаем настройку из меню. 
+        // 0 = Танковое управление (галочка снята). Танк всегда крутится куда нажато.
+        // 1 = Автомобильное управление (галочка стоит). При езде назад перед уходит в обратную сторону.
+        bool isCarSteering = PlayerPrefs.GetInt("InvertReverse", 0) == 1;
+
+        // Если мы едем назад (нажата S) И игрок включил инверсию в настройках
+        if (inputDirection.y < -0.01f && isCarSteering)
+        {
+            turnInput *= -1f; // Только тогда меняем сторону поворота
+        }
+
+        float targetAngularVel = turnInput * (turnSpeed * Mathf.Deg2Rad);
         Vector3 currentAngularVel = transform.InverseTransformDirection(rb.angularVelocity);
         float effectiveTurnAccel = turnAcceleration * contactFactor;
+
         float newY = Mathf.MoveTowards(currentAngularVel.y, targetAngularVel, effectiveTurnAccel * Mathf.Deg2Rad * Time.fixedDeltaTime);
         rb.angularVelocity = transform.TransformDirection(new Vector3(currentAngularVel.x, newY, currentAngularVel.z));
     }
@@ -160,12 +193,32 @@ public class TankChassisController : MonoBehaviour
         rb.AddRelativeTorque(Vector3.forward * rollTorque, ForceMode.Force);
     }
 
-    private void ApplyAntiDrift(float contactFactor)
+    private void ApplyFriction(float contactFactor)
     {
-        float frictionMultiplier = driftMode ? driftIntensity : 1.0f;
+        if (contactFactor <= 0.01f) return;
+
         Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
-        Vector3 antiDriftForce = transform.right * (-localVel.x * sideAcceleration * weight * Time.fixedDeltaTime * contactFactor * frictionMultiplier);
-        rb.AddForce(antiDriftForce, ForceMode.Impulse);
+        float frictionMultiplier = driftMode ? driftIntensity : 1.0f;
+
+        // 1. Добавляем Time.fixedDeltaTime, чтобы сила не была астрономической.
+        // Умножаем на 10f для сохранения упругости анти-дрифта.
+        float sideVelocityForce = -localVel.x * weight * sideAcceleration * Time.fixedDeltaTime * 10f;
+
+        // 2. Радикально снижаем "бетонный" лимит сцепления. 
+        // Раньше было * 2.0f (164 000 Ньютонов). Теперь * 0.2f (около 16 400 Ньютонов).
+        // Теперь двигатель твоего танка сможет преодолеть эту силу и заставить болванку скользить вбок!
+        float maxGripForce = weight * sideAcceleration * 0.5f;
+
+        // Обрезаем силу трения (срыв гусениц)
+        sideVelocityForce = Mathf.Clamp(sideVelocityForce, -maxGripForce, maxGripForce);
+
+        Vector3 gravityForce = Physics.gravity * rb.mass;
+        float gravitySideComponent = Vector3.Dot(gravityForce, transform.right);
+
+        // Формируем финальный вектор
+        Vector3 finalAntiDriftForce = transform.right * (sideVelocityForce - gravitySideComponent) * contactFactor * frictionMultiplier;
+
+        rb.AddForce(finalAntiDriftForce, ForceMode.Force);
     }
 
     private void ApplyWobble(float contactFactor)
@@ -175,43 +228,34 @@ public class TankChassisController : MonoBehaviour
         torqueX *= contactFactor;
         rb.AddRelativeTorque(Vector3.right * torqueX, ForceMode.Force);
     }
+
+    public void SetTrackAnimators(TrackUVAnimator lTracks, TrackUVAnimator rTracks)
+    {
+        leftTrackAnim = lTracks;
+        rightTrackAnim = rTracks;
+    }
+
     private void UpdateTrackAnimations()
     {
         if (leftTrackAnim == null || rightTrackAnim == null) return;
 
-        float targetLeftSpeed = 0f;
-        float targetRightSpeed = 0f;
-
+        // Если танк на земле, вычисляем физическую скорость гусениц (с учетом поворота)
         if (leftTrack.numContacts > 0 || rightTrack.numContacts > 0)
         {
             float localForwardSpeed = transform.InverseTransformDirection(rb.linearVelocity).z;
             float rotationSpeed = rb.angularVelocity.y * (trackSeparation / 2f);
 
-            targetLeftSpeed = localForwardSpeed + rotationSpeed;
-            targetRightSpeed = localForwardSpeed - rotationSpeed;
-
-            currentLeftAnimSpeed = targetLeftSpeed;
-            currentRightAnimSpeed = targetRightSpeed;
+            currentLeftAnimSpeed = localForwardSpeed + rotationSpeed;
+            currentRightAnimSpeed = localForwardSpeed - rotationSpeed;
         }
         else
         {
+            // Если танк в воздухе, крутим гусеницы от чистого инпута (педаль газа)
             float forwardInput = inputDirection.y;
             float turnInput = inputDirection.x;
 
-            targetLeftSpeed = (forwardInput + turnInput) * trackAirSpeed;
-            targetRightSpeed = (forwardInput - turnInput) * trackAirSpeed;
-
-            currentLeftAnimSpeed = Mathf.MoveTowards(
-                currentLeftAnimSpeed,
-                targetLeftSpeed,
-                trackAirAcceleration * Time.deltaTime
-            );
-
-            currentRightAnimSpeed = Mathf.MoveTowards(
-                currentRightAnimSpeed,
-                targetRightSpeed,
-                trackAirAcceleration * Time.deltaTime
-            );
+            currentLeftAnimSpeed = Mathf.MoveTowards(currentLeftAnimSpeed, (forwardInput + turnInput) * 5f, 10f * Time.deltaTime);
+            currentRightAnimSpeed = Mathf.MoveTowards(currentRightAnimSpeed, (forwardInput - turnInput) * 5f, 10f * Time.deltaTime);
         }
 
         leftTrackAnim.UpdateTrackAnimation(currentLeftAnimSpeed);
@@ -234,18 +278,15 @@ public class TankChassisController : MonoBehaviour
             Vector3 worldOrigin = transform.TransformPoint(ray.localOrigin);
             if (ray.hasCollision)
             {
-                // Луч коснулся земли (Зеленый)
                 Gizmos.color = Color.green;
                 Gizmos.DrawLine(worldOrigin, ray.hit.point);
                 Gizmos.DrawWireSphere(ray.hit.point, 0.05f);
 
-                // Вектор силы (Желтый)
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawRay(ray.hit.point, Vector3.up * (ray.hit.distance * 2f));
             }
             else
             {
-                // Луч в воздухе (Красный)
                 Gizmos.color = Color.red;
                 Gizmos.DrawRay(worldOrigin, transform.TransformDirection(Vector3.down) * maxRayLength);
             }

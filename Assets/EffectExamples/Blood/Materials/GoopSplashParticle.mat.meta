@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 37461b35704e38442a61bc5f81cd6c3a
+timeCreated: 1473858336
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 127325
+  packageName: Particle Pack
+  packageVersion: 3.1
+  assetPath: Assets/EffectExamples/Blood/Materials/GoopSplashParticle.mat
+  uploadId: 896138

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dac601e5b1e36748b79eb4a3397f5d6, type: 3}
+  m_Name: cow_Config
+  m_EditorClassIdentifier: Assembly-CSharp::TankSkinConfig
+  skinId: cow
+  skinTexture: {fileID: 2800000, guid: 1279a4e60f1f5d14c9d18f5f91a48929, type: 3}
+  previewTexture: {fileID: 2800000, guid: 34e9b8fc210e3cc4e9cb547b9bef7b31, type: 3}
+  tiling: {x: 5, y: 5}

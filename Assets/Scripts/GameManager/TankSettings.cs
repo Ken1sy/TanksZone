@@ -24,6 +24,4 @@ public class TankSettings
     public float wobbleFactor;
     public float sideRollFactor;
     public float driftIntensity;
-    public float trackAirAcceleration;
-    public float trackAirSpeed;
 }

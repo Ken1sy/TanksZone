@@ -15,26 +15,6 @@ namespace GameScripts.AIM
         [Header("Wall Protection")]
         public float muzzleClearanceRadius = 0.15f;
 
-        [Header("Debug")]
-        public bool showGizmos = true;
-
-        private bool targetFoundInFrame;
-        private Vector3 currentTargetPoint;
-        private Transform muzzlePoint;
-
-        // Этот метод теперь вызывается каждый кадр для обновления Gizmos
-        private void Update()
-        {
-            if (muzzlePoint == null || !showGizmos) return;
-
-            // Постоянно сканируем пространство, чтобы видеть зеленый луч до выстрела
-            ScanForTarget(muzzlePoint);
-        }
-        public void SetMuzzlePoint(Transform muzzle)
-        {
-            muzzlePoint = muzzle;
-        }
-
         public Vector3 GetAimDirection(Transform turretBase, Transform muzzle, out bool isBlocked)
         {
             isBlocked = CheckIfBlocked(turretBase, muzzle);
@@ -51,52 +31,44 @@ namespace GameScripts.AIM
         }
         private Vector3 ScanForTarget(Transform muzzle)
         {
-            targetFoundInFrame = false;
+            int firstHitIndex = -1;
+            int lastHitIndex = -1;
 
             float totalAngle = verticalAngleUp + verticalAngleDown;
             float step = totalAngle / raysPerAngle;
 
-            for (int i = 0; i <= raysPerAngle; i++)
+            for (int i = 0; i < raysPerAngle; i++)
             {
-                float currentAngle = -verticalAngleDown + (step * i);
-                Vector3 direction = Quaternion.AngleAxis(currentAngle, muzzle.right) * muzzle.forward;
+                float lerpPct = (raysPerAngle > 1) ? (float)i / (raysPerAngle - 1) : 0.5f;
+                float currentAngle = Mathf.Lerp(verticalAngleUp, -verticalAngleDown, lerpPct);
+                Vector3 rayDir = Quaternion.AngleAxis(currentAngle, -muzzle.right) * muzzle.forward;
 
-                if (Physics.Raycast(muzzle.position, direction, out RaycastHit hit, maxDistance, targetLayer | obstacleLayer))
+                // Проверяем, не преграждает ли путь препятствие (стена) перед тем как искать танк
+                if (Physics.Raycast(muzzle.position, rayDir, out RaycastHit hit, maxDistance, targetLayer | obstacleLayer))
                 {
-                    if ((targetLayer.value & (1 << hit.collider.gameObject.layer)) > 0)
+                    // Если попали именно в слой цели
+                    if (((1 << hit.collider.gameObject.layer) & targetLayer) != 0)
                     {
-                        targetFoundInFrame = true;
-                        currentTargetPoint = hit.point; // Запоминаем для Gizmos
-                        return (hit.point - muzzle.position).normalized;
+                        if (firstHitIndex == -1) firstHitIndex = i; // Запоминаем самый верхний луч
+                        lastHitIndex = i; // Постоянно обновляем, пока попадаем (в итоге будет самый нижний)
                     }
                 }
             }
-            return muzzle.forward;
-        }
-        private void OnDrawGizmos()
-        {
-            if (!showGizmos || Application.isPlaying == false) return;
-            if (muzzlePoint == null) return;
 
-            // 1. Отрисовка ГРАНИЦ зоны поиска (Верхний и Нижний лучи)
-            Gizmos.color = Color.gray;
-            Vector3 topDir = Quaternion.AngleAxis(verticalAngleUp, -muzzlePoint.right) * muzzlePoint.forward;
-            Vector3 bottomDir = Quaternion.AngleAxis(-verticalAngleDown, -muzzlePoint.right) * muzzlePoint.forward;
-
-            Gizmos.DrawRay(muzzlePoint.position, topDir * 10f);
-            Gizmos.DrawRay(muzzlePoint.position, bottomDir * 10f);
-
-            // 2. Отрисовка луча К ЦЕЛИ (только если цель в прицеле)
-            if (Application.isPlaying && targetFoundInFrame)
+            if (firstHitIndex != -1)
             {
-                Gizmos.color = Color.green;
-                Gizmos.DrawLine(muzzlePoint.position, currentTargetPoint);
-                Gizmos.DrawWireSphere(currentTargetPoint, 0.2f);
+
+                // Находим средний индекс между верхом и низом
+                float middleIndex = (firstHitIndex + lastHitIndex) / 2f;
+                float middlePct = (raysPerAngle > 1) ? middleIndex / (raysPerAngle - 1) : 0.5f;
+                float middleAngle = Mathf.Lerp(verticalAngleUp, -verticalAngleDown, middlePct);
+
+                Vector3 finalDir = Quaternion.AngleAxis(middleAngle, -muzzle.right) * muzzle.forward;
+
+                return finalDir;
             }
 
-            // Проверка блокировки ствола
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(muzzlePoint.position, muzzleClearanceRadius);
+            return muzzle.forward;
         }
     }
 }

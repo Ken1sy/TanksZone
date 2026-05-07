@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dac601e5b1e36748b79eb4a3397f5d6, type: 3}
+  m_Name: irbis_Config
+  m_EditorClassIdentifier: Assembly-CSharp::TankSkinConfig
+  skinId: irbis
+  skinTexture: {fileID: 2800000, guid: 9e81960a5107c744f8020e8cf24b2ade, type: 3}
+  previewTexture: {fileID: 2800000, guid: 5e1d1f7084921d745918b71606b46c76, type: 3}
+  tiling: {x: 5, y: 5}

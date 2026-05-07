@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 98806ff4c4c1d35418eb23c5e0d0c88a
+timeCreated: 1473942290
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 127325
+  packageName: Particle Pack
+  packageVersion: 3.1
+  assetPath: Assets/EffectExamples/Blood/Prefabs/GoopSprayEffect.prefab
+  uploadId: 896138

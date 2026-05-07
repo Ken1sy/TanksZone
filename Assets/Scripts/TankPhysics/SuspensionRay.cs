@@ -37,7 +37,7 @@ public class SuspensionRay
             }
 
             hasCollision = true;
-
+            
             // Расчет сжатия (0 = нет сжатия, maxLen = полное сжатие)
             float compression = maxLen - hit.distance;
 
