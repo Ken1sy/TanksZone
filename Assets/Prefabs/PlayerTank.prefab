@@ -241,7 +241,7 @@ MonoBehaviour:
   manualHullPrefab: {fileID: 0}
   manualTurretPrefab: {fileID: 0}
   manualHullId: Hornet_Standart
-  manualSkinId: green
+  manualSkinId: nano
 --- !u!114 &3950555585451684736
 MonoBehaviour:
   m_ObjectHideFlags: 0

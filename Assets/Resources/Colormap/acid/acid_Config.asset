@@ -15,4 +15,7 @@ MonoBehaviour:
   skinId: acid
   skinTexture: {fileID: 2800000, guid: 2c9fa8191d95d5c4aa47099a17cf2f9f, type: 3}
   previewTexture: {fileID: 2800000, guid: 4bebaf4a87d2ffc47879b7d5f846c181, type: 3}
-  tiling: {x: 5, y: 5}
+  baseTiling: 0.3
+  gridSize: {x: 1, y: 1}
+  animationSpeed: 0
+  totalFrames: 1

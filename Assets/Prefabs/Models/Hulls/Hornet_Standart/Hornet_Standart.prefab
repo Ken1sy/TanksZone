@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2346708981705725302}
   - component: {fileID: 8315940705802727244}
   - component: {fileID: 6778783573480658653}
+  - component: {fileID: 4318435023661728829}
   m_Layer: 13
   m_Name: Hornet_Standart
   m_TagString: Tank
@@ -130,6 +131,58 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -6989282167128152099, guid: 53dca743003e2d048b959bb3b08ea0f7, type: 3}
+--- !u!114 &4318435023661728829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 487565236925907757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 001de66c46061e0438aaf2bf3e0a87e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankTrackDecals
+  leftTrackPoint: {fileID: 5545495958274083996}
+  rightTrackPoint: {fileID: 2658616046885314568}
+  trackDecalPrefab: {fileID: 2239392419801565936, guid: cc4c80a69481a1e439b4d5f440b1e568, type: 3}
+  spawnDistance: 0.22
+  raycastDistance: 0.5
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  maxDecals: 500
+--- !u!1 &719165721525466748
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5545495958274083996}
+  m_Layer: 9
+  m_Name: ltpoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5545495958274083996
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 719165721525466748}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.347, y: 0.05, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5840523686614925802}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1956683633498387739
 GameObject:
   m_ObjectHideFlags: 0
@@ -1019,7 +1072,8 @@ Transform:
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2658616046885314568}
   m_Father: {fileID: 8360175537819042235}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5071023688386764388
@@ -1216,7 +1270,8 @@ Transform:
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5545495958274083996}
   m_Father: {fileID: 8360175537819042235}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3702237367713448686
@@ -1562,6 +1617,37 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &8198178797077037428
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2658616046885314568}
+  m_Layer: 9
+  m_Name: rtpoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2658616046885314568
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8198178797077037428}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.347, y: 0.05, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6320951981306745740}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8817194569463095721
 GameObject:
   m_ObjectHideFlags: 0

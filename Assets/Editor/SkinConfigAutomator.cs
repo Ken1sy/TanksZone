@@ -43,7 +43,7 @@ public class SkinConfigAutomator
                 {
                     // Создаем новый
                     config = ScriptableObject.CreateInstance<TankSkinConfig>();
-                    config.tiling = new Vector2(10f, 10f); // Тайлинг по умолчанию
+                    config.baseTiling = 1.5f; // Тайлинг по умолчанию
                     AssetDatabase.CreateAsset(config, configPath);
                 }
 
@@ -85,7 +85,7 @@ public class SkinConfigAutomator
             if (config != null)
             {
                 // Жестко перезаписываем тайлинг
-                config.tiling = new Vector2(5f, 5f);
+                config.baseTiling = 1.5f;
 
                 // Говорим Юнити: "Я изменил этот файл, не забудь его сохранить"
                 EditorUtility.SetDirty(config);
@@ -96,7 +96,7 @@ public class SkinConfigAutomator
         // Сохраняем все измененные файлы на жесткий диск
         AssetDatabase.SaveAssets();
 
-        Debug.Log($"<color=cyan>Массовое обновление завершено!</color> Изменено тайлингов на 10x10: {count}");
+        Debug.Log($"<color=cyan>Массовое обновление завершено!</color> Изменено тайлингов: {count}");
     }
 
     [MenuItem("Assets/Удалить ВСЕ конфиги скинов (Опасно!)")]

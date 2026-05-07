@@ -15,4 +15,7 @@ MonoBehaviour:
   skinId: virus
   skinTexture: {fileID: 2800000, guid: c476abbb211ec24469586f1db11e1285, type: 3}
   previewTexture: {fileID: 2800000, guid: 45a0c3e020a61e048b6a739870632af2, type: 3}
-  tiling: {x: 5, y: 5}
+  baseTiling: 1.5
+  gridSize: {x: 10, y: 10}
+  animationSpeed: 1
+  totalFrames: 75

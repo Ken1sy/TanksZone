@@ -15,4 +15,7 @@ MonoBehaviour:
   skinId: witch
   skinTexture: {fileID: 2800000, guid: 278cf02e3cf47e742954256bc2acece0, type: 3}
   previewTexture: {fileID: 2800000, guid: 2c55d093294556d4ebb29aaad57a4f9e, type: 3}
-  tiling: {x: 5, y: 5}
+  tiling: {x: 1, y: 1}
+  gridSize: {x: 10, y: 10}
+  animationSpeed: 24
+  totalFrames: 89

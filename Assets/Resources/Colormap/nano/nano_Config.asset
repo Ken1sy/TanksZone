@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1dac601e5b1e36748b79eb4a3397f5d6, type: 3}
-  m_Name: zeus_Config
+  m_Name: nano_Config
   m_EditorClassIdentifier: Assembly-CSharp::TankSkinConfig
-  skinId: zeus
-  skinTexture: {fileID: 2800000, guid: b86bd8df63feed5439ce8354ff31907f, type: 3}
-  previewTexture: {fileID: 2800000, guid: f9f44ce50cef2154bbc64b83cfcc97a7, type: 3}
-  baseTiling: 0.4
+  skinId: nano
+  skinTexture: {fileID: 2800000, guid: 1bf17820c156f504e88246559e030200, type: 3}
+  previewTexture: {fileID: 2800000, guid: 4bebaf4a87d2ffc47879b7d5f846c181, type: 3}
+  baseTiling: 0.3
   gridSize: {x: 1, y: 1}
-  animationSpeed: 1
+  animationSpeed: 0
   totalFrames: 1
