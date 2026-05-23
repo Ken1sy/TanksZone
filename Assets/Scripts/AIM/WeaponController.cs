@@ -1,3 +1,4 @@
+using FishNet.Object;
 using UnityEngine;
 
 namespace GameScripts.AIM
@@ -32,144 +33,111 @@ namespace GameScripts.AIM
             mainCamera = UnityEngine.Camera.main;
         }
 
-        public void SetMuzzlePoint(Transform muzzle)
-        {
-            muzzlePoint = muzzle;
-        }
+        public void SetMuzzlePoint(Transform muzzle) { muzzlePoint = muzzle; }
 
-        private void Update()
-        {
-            if (isLocalPlayer)
-            {
-                UpdateCrosshairPosition();
-            }
-        }
+        private void Update() { if (isLocalPlayer) UpdateCrosshairPosition(); }
 
         private void UpdateCrosshairPosition()
         {
             if (muzzlePoint == null || CrosshairUI.Instance == null || mainCamera == null) return;
-
             bool isCursorFree = Cursor.visible || Cursor.lockState == CursorLockMode.None;
-            if (isCursorFree)
-            {
-                CrosshairUI.Instance.UpdateCrosshair(Vector3.zero, false, true);
-                return;
-            }
-
+            if (isCursorFree) { CrosshairUI.Instance.UpdateCrosshair(Vector3.zero, false, true); return; }
             Vector3 aimDirection = smartAim.GetAimDirection(transform, muzzlePoint, out bool isBlocked).normalized;
             Vector3 targetPoint;
-
-            if (Physics.Raycast(muzzlePoint.position, aimDirection, out RaycastHit hit, range, hitMask))
-            {
-                targetPoint = hit.point;
-            }
-            else
-            {
-                targetPoint = muzzlePoint.position + aimDirection * range;
-            }
-
+            if (Physics.Raycast(muzzlePoint.position, aimDirection, out RaycastHit hit, range, hitMask)) targetPoint = hit.point;
+            else targetPoint = muzzlePoint.position + aimDirection * range;
             Vector3 screenPos = mainCamera.WorldToScreenPoint(targetPoint);
             CrosshairUI.Instance.UpdateCrosshair(screenPos, isBlocked, false);
         }
 
-        public void TryShoot()
+        public void TryShootLocal(out Vector3 aimDirection, out bool isBlocked, out NetworkObject hitNetObj, out Vector3 hitPoint)
         {
+            aimDirection = Vector3.forward;
+            isBlocked = false;
+            hitNetObj = null;
+            hitPoint = Vector3.zero;
             if (muzzlePoint == null) return;
+            aimDirection = smartAim.GetAimDirection(transform, muzzlePoint, out isBlocked).normalized;
+            ExecuteVisualShot(aimDirection, isBlocked, out hitNetObj, out hitPoint);
+            if (mainCamera != null)
+            {
+                GameScripts.Camera.CameraController camCtrl = mainCamera.GetComponentInParent<GameScripts.Camera.CameraController>();
+                if (camCtrl != null) camCtrl.ApplyCameraRecoil(1f);
+            }
+        }
 
-            Vector3 aimDirection = smartAim.GetAimDirection(transform, muzzlePoint, out bool isBlocked).normalized;
+        public void PerformRemoteShoot(Vector3 aimDirection, bool isBlocked)
+        {
+            NetworkObject dummyObj; Vector3 dummyPos;
+            ExecuteVisualShot(aimDirection, isBlocked, out dummyObj, out dummyPos);
+        }
 
+        private void ExecuteVisualShot(Vector3 aimDirection, bool isBlocked, out NetworkObject hitNetObj, out Vector3 hitPoint)
+        {
+            hitNetObj = null; hitPoint = Vector3.zero;
             ShowMuzzleFlash();
-
             if (isBlocked)
             {
                 Vector3 impactPos = muzzlePoint.position;
                 Vector3 impactNormal = -muzzlePoint.forward;
                 Transform targetTransform = null;
-
                 if (Physics.Linecast(transform.position, muzzlePoint.position, out RaycastHit blockHit, hitMask))
                 {
                     impactPos = blockHit.point + blockHit.normal * 0.02f;
                     impactNormal = blockHit.normal;
                     targetTransform = blockHit.collider.transform;
                 }
-
-                if (hitEffectPrefab != null)
-                {
-                    Instantiate(hitEffectPrefab, impactPos, Quaternion.LookRotation(impactNormal));
-                }
-
-                if (decalPrefab != null && targetTransform != null)
-                {
-                    GameObject decal = Instantiate(decalPrefab, impactPos, Quaternion.LookRotation(-impactNormal));
-                    decal.transform.SetParent(targetTransform);
-                    decal.transform.Rotate(0, 0, Random.Range(0f, 360f), Space.Self);
-                    Destroy(decal, 10f);
-                }
-
-                // Вызываем отдачу без передачи aimDirection
-                ApplyRecoil();
+                SpawnHitVisuals(impactPos, impactNormal, targetTransform);
                 return;
             }
-
-            PerformRaycastShot(aimDirection);
-
-            // Вызываем отдачу без передачи aimDirection
-            ApplyRecoil();
+            if (Physics.Raycast(muzzlePoint.position, aimDirection, out RaycastHit hit, range, hitMask))
+            {
+                hitPoint = hit.point;
+                hitNetObj = hit.collider.GetComponentInParent<NetworkObject>();
+                SpawnHitVisuals(hit.point, hit.normal, hit.collider.transform);
+            }
         }
 
-        private void PerformRaycastShot(Vector3 direction)
+        public void PerformServerPhysics(Vector3 aimDirection, bool isBlocked, NetworkObject hitNetObj, Vector3 hitPoint)
         {
-            Vector3 hitPosition;
+            ApplyRecoil();
 
-            if (Physics.Raycast(muzzlePoint.position, direction, out RaycastHit hit, range, hitMask))
+            if (isBlocked) return;
+            if (hitNetObj != null)
             {
-                hitPosition = hit.point;
-
-                if (hitEffectPrefab != null)
-                {
-                    Instantiate(hitEffectPrefab, hitPosition, Quaternion.LookRotation(hit.normal));
-                }
-
-                if (decalPrefab != null)
-                {
-                    Vector3 safePosition = hitPosition + hit.normal * 0.02f;
-                    GameObject decal = Instantiate(decalPrefab, safePosition, Quaternion.LookRotation(-hit.normal));
-                    decal.transform.SetParent(hit.collider.transform);
-                    decal.transform.Rotate(0, 0, Random.Range(0f, 360f), Space.Self);
-                    Destroy(decal, 10f);
-                }
-
-                Rigidbody targetRb = hit.collider.attachedRigidbody;
-
+                Rigidbody targetRb = hitNetObj.GetComponent<Rigidbody>();
                 if (targetRb != null && targetRb != tankRigidbody)
                 {
-                    targetRb.AddForceAtPosition(direction * impactForce, hitPosition, ForceMode.Impulse);
+                    targetRb.AddForceAtPosition(aimDirection * impactForce, hitPoint, ForceMode.Impulse);
                 }
             }
-            else
+        }
+
+        private void SpawnHitVisuals(Vector3 pos, Vector3 normal, Transform parent)
+        {
+            if (hitEffectPrefab != null)
+                Instantiate(hitEffectPrefab, pos, Quaternion.LookRotation(normal));
+
+            if (decalPrefab != null && parent != null)
             {
-                hitPosition = muzzlePoint.position + direction * range;
+                Vector3 safePosition = pos + normal * 0.02f;
+                GameObject decal = Instantiate(decalPrefab, safePosition, Quaternion.LookRotation(-normal));
+                decal.transform.SetParent(parent);
+                decal.transform.Rotate(0, 0, Random.Range(0f, 360f), Space.Self);
+                Destroy(decal, 10f);
             }
         }
 
         private void ShowMuzzleFlash()
         {
             if (muzzleFlashPrefab != null && muzzlePoint != null)
-            {
                 Instantiate(muzzleFlashPrefab, muzzlePoint.position, muzzlePoint.rotation, muzzlePoint);
-            }
         }
 
         private void ApplyRecoil()
         {
             if (tankRigidbody == null || muzzlePoint == null) return;
-
-            // 1. Направление отдачи ВСЕГДА строго назад относительно самого ствола
             Vector3 recoilDirection = -muzzlePoint.forward;
-
-            // 2. Возвращаем AddForceAtPosition. 
-            // Теперь сила снова бьет высоко в дуло, создавая рычаг и реалистичный крен,
-            // но так как вектор правильный, танк больше не будет делать сальто.
             tankRigidbody.AddForceAtPosition(recoilDirection * recoilForce, muzzlePoint.position, ForceMode.Impulse);
         }
     }

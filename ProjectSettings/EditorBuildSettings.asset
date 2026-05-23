@@ -6,11 +6,26 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/00_Bootstrap.unity
+    guid: 2fa6f9d85387f1c4caabf3bcf876654d
+  - enabled: 1
+    path: Assets/Scenes/01_Auth.unity
+    guid: 12c83f501471fe24f8278314a478e6d9
+  - enabled: 1
+    path: Assets/Scenes/02_Garage.unity
+    guid: 2518030a47f0ed541a89f849b3cf15dc
+  - enabled: 1
+    path: Assets/Scenes/03_BattleMap.unity
+    guid: 3b123741eb0e32a41944e0e5f6b919a1
+  - enabled: 0
     path: Assets/Scenes/Hangar.unity
     guid: 735c1e4c9b7fe4e46a0c0df68d96fdf5
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Map_Silence.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 0
+    path: Assets/Scenes/NetTestScene.unity
+    guid: f53149e01600a4247a9f517ee1ee8b27
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

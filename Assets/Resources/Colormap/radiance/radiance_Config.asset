@@ -15,4 +15,7 @@ MonoBehaviour:
   skinId: radiance
   skinTexture: {fileID: 2800000, guid: 890124eabfeb08c43a74f1dabb741695, type: 3}
   previewTexture: {fileID: 2800000, guid: 9c01b0aae79f8804a9235d64831763a4, type: 3}
-  tiling: {x: 5, y: 5}
+  baseTiling: 0.15
+  gridSize: {x: 9, y: 9}
+  animationSpeed: 24
+  totalFrames: 75

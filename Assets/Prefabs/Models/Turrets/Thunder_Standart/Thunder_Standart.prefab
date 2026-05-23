@@ -140,7 +140,7 @@ MonoBehaviour:
   isLocalPlayer: 0
   hitMask:
     serializedVersion: 2
-    m_Bits: 10240
+    m_Bits: 2048
   damage: 50
   range: 1000
   impactForce: 10000

@@ -1,7 +1,8 @@
-using UnityEngine;
 using System.Collections.Generic;
+using FishNet.Object;
+using UnityEngine;
 
-public class TankSkinSwitcher : MonoBehaviour
+public class TankSkinSwitcher : NetworkBehaviour
 {
     [Header("Настройки Шейдера")]
     public string skinTexturePropertyName = "_SkinTexture";
@@ -16,18 +17,15 @@ public class TankSkinSwitcher : MonoBehaviour
     private int currentIndex = 0;
     private bool isLocalPlayer = false;
 
-    void Awake()
+    public override void OnStartClient()
     {
-        isLocalPlayer = GetComponent<PlayerTankBrain>() != null;
-    }
+        base.OnStartClient();
 
-    void Start()
-    {
+        isLocalPlayer = base.IsOwner;
+
         if (isLocalPlayer && DeveloperConsole.Instance != null)
         {
             DeveloperConsole.Instance.AddCommand("setskin", CmdSetSkin);
-
-            // КОМАНДЫ ДЛЯ НАСТРОЙКИ (Live Editor)
             DeveloperConsole.Instance.AddCommand("tiling", CmdSetTiling);
             DeveloperConsole.Instance.AddCommand("animspeed", CmdSetAnimSpeed);
             DeveloperConsole.Instance.AddCommand("grid", CmdSetGrid);
@@ -66,7 +64,6 @@ public class TankSkinSwitcher : MonoBehaviour
     {
         if (config == null) return;
 
-        // Применяем к корпусу
         if (hullRenderer != null && hullMaterial != null)
         {
             float hullSize = Mathf.Max(hullRenderer.bounds.size.x, hullRenderer.bounds.size.z);
@@ -74,7 +71,6 @@ public class TankSkinSwitcher : MonoBehaviour
             UpdateMaterial(hullMaterial, config, autoTiling);
         }
 
-        // Применяем к пушке
         if (turretRenderer != null && turretMaterial != null)
         {
             float turretSize = Mathf.Max(turretRenderer.bounds.size.x, turretRenderer.bounds.size.z);
@@ -96,15 +92,10 @@ public class TankSkinSwitcher : MonoBehaviour
     {
 #if UNITY_EDITOR
         UnityEditor.EditorUtility.SetDirty(config);
-        // Необязательно, но полезно для мгновенного сохранения файла на диск
         UnityEditor.AssetDatabase.SaveAssets();
 #endif
         ApplyConfig(config);
     }
-
-    // ==========================================
-    // ОБРАБОТЧИКИ КОМАНД
-    // ==========================================
 
     private void CmdSetTiling(string[] args)
     {

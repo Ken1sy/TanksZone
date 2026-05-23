@@ -27,6 +27,10 @@ namespace GameScripts.Camera
         public float cameraRadius = 0.3f;
         public float collisionOffset = 0.1f;
 
+        [Header("Recoil Effect")]
+        public float recoilRecoverySpeed = 15f;
+        private float _recoilPitch = 0f;
+
         [Header("State")]
         public bool follow = true;
         public bool spectatorMode;
@@ -118,6 +122,11 @@ namespace GameScripts.Camera
             }
         }
 
+        public void ApplyCameraRecoil(float kickForce)
+        {
+            _recoilPitch -= kickForce; // Резко задираем камеру вверх
+        }
+
         private void HandleFollow()
         {
             transform.position = Vector3.Lerp(
@@ -132,7 +141,11 @@ namespace GameScripts.Camera
                 _currentPitch = Mathf.Clamp(_currentPitch, minPitch, maxPitch);
             }
 
-            transform.rotation = Quaternion.Euler(_currentPitch, _currentYaw, 0);
+            // Плавное возвращение камеры на место после выстрела
+            _recoilPitch = Mathf.Lerp(_recoilPitch, 0f, Time.deltaTime * recoilRecoverySpeed);
+
+            // Применяем отдачу к итоговому повороту
+            transform.rotation = Quaternion.Euler(_currentPitch + _recoilPitch, _currentYaw, 0);
         }
 
         private void HandleZoom()

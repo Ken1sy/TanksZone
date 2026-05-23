@@ -135,4 +135,131 @@ public class SkinConfigAutomator
 
         Debug.Log($"<color=red>Очистка завершена!</color> Удалено файлов конфигурации: {count}");
     }
+
+    [MenuItem("Assets/1. Гараж: Сделать все preview спрайтами")]
+    public static void FixPreviewSprites()
+    {
+        string basePath = "Assets/Resources/Colormap";
+        if (!AssetDatabase.IsValidFolder(basePath))
+        {
+            Debug.LogWarning("Папка " + basePath + " не найдена.");
+            return;
+        }
+
+        string[] skinFolders = AssetDatabase.GetSubFolders(basePath);
+        int count = 0;
+
+        foreach (string folderPath in skinFolders)
+        {
+            string previewPng = $"{folderPath}/preview.png";
+            string previewJpg = $"{folderPath}/preview.jpg";
+
+            // Ищем, есть ли файл с таким форматом
+            string targetPath = File.Exists(previewPng) ? previewPng : (File.Exists(previewJpg) ? previewJpg : null);
+
+            if (targetPath != null)
+            {
+                // Получаем доступ к настройкам импорта файла
+                TextureImporter importer = AssetImporter.GetAtPath(targetPath) as TextureImporter;
+                if (importer != null)
+                {
+                    bool changed = false;
+
+                    if (importer.textureType != TextureImporterType.Sprite)
+                    {
+                        importer.textureType = TextureImporterType.Sprite;
+                        changed = true;
+                    }
+
+                    if (importer.spriteImportMode != SpriteImportMode.Single)
+                    {
+                        importer.spriteImportMode = SpriteImportMode.Single;
+                        changed = true;
+                    }
+
+                    // Сохраняем только если были изменения
+                    if (changed)
+                    {
+                        importer.SaveAndReimport();
+                        count++;
+                    }
+                }
+            }
+        }
+
+        Debug.Log($"<color=green>Обновлено превью (сделаны спрайтами): {count} шт.</color>");
+    }
+
+    [MenuItem("Assets/2. Гараж: Добавить все краски в базу (Items Database)")]
+    public static void AddPaintsToGarageDatabase()
+    {
+        // Ищем менеджер гаража на ОТКРЫТОЙ сцене
+        GarageItemsManager manager = Object.FindAnyObjectByType<GarageItemsManager>();
+        if (manager == null)
+        {
+            Debug.LogError("На сцене не найден GarageItemsManager! Откройте сцену гаража перед запуском.");
+            return;
+        }
+
+        string basePath = "Assets/Resources/Colormap";
+        if (!AssetDatabase.IsValidFolder(basePath)) return;
+
+        string[] skinFolders = AssetDatabase.GetSubFolders(basePath);
+        int addedCount = 0;
+
+        // Если список еще не создан, создаем его
+        if (manager.itemsDatabase == null)
+            manager.itemsDatabase = new System.Collections.Generic.List<GarageItemInfo>();
+
+        foreach (string folderPath in skinFolders)
+        {
+            string folderName = Path.GetFileName(folderPath);
+            string expectedId = "paint_" + folderName;
+
+            // Проверяем, не добавляли ли мы эту краску ранее (чтобы не было дубликатов)
+            bool exists = false;
+            foreach (var item in manager.itemsDatabase)
+            {
+                if (item.itemID == expectedId)
+                {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists)
+            {
+                GarageItemInfo newItem = new GarageItemInfo();
+                newItem.itemID = expectedId;
+                newItem.itemName = char.ToUpper(folderName[0]) + folderName.Substring(1); // Делаем первую букву названия заглавной
+                newItem.category = ItemCategory.Paint;
+                newItem.paintSkinId = folderName;
+                newItem.price = 1000; // Цена по умолчанию
+                newItem.isOwned = false;
+                newItem.isEquipped = false;
+                newItem.requiredRankIndex = 0; // Доступно с Новобранца
+
+                // Загружаем наш спрайт превью (который мы настроили предыдущей кнопкой)
+                Sprite previewSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{folderPath}/preview.png");
+                if (previewSprite == null) previewSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{folderPath}/preview.jpg");
+
+                newItem.itemIcon = previewSprite;
+
+                manager.itemsDatabase.Add(newItem);
+                addedCount++;
+            }
+        }
+
+        if (addedCount > 0)
+        {
+            // Говорим Unity, что мы изменили компонент на сцене, чтобы появилась "звездочка" сохранения
+            EditorUtility.SetDirty(manager);
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(manager.gameObject.scene);
+            Debug.Log($"<color=green>Успешно добавлено {addedCount} новых красок в базу Гаража!</color>");
+        }
+        else
+        {
+            Debug.Log("Новых красок не найдено (все уже есть в базе).");
+        }
+    }
 }

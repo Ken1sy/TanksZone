@@ -1,9 +1,10 @@
-using System.IO;
-using UnityEngine;
-using GameScripts.Camera;
 using GameScripts.AIM;
+using GameScripts.Camera;
+using System.IO;
+using FishNet.Object;
+using UnityEngine;
 
-public class TankAssembler : MonoBehaviour
+public class TankAssembler : NetworkBehaviour
 {
     [Header("Настройки для Болванок (Ручной спавн)")]
     public bool assembleOnStart = false;
@@ -12,12 +13,30 @@ public class TankAssembler : MonoBehaviour
     public string manualHullId = "Hornet_Standart";
     public string manualSkinId = "blue";
 
-    private void Start()
+    // Сохраняем ссылки на компоненты, чтобы выдать им права позже
+    private TankChassisController tankController;
+    private TurretController turretMountController;
+    private WeaponController weaponCtrl;
+    private CameraController cam;
+    private Transform followingCamera;
+    private Rigidbody rb;
+
+    // 1. ЭТАП СБОРКИ: Вызывается самым первым
+    public override void OnStartNetwork()
     {
+        base.OnStartNetwork();
+
         if (assembleOnStart && manualHullPrefab != null && manualTurretPrefab != null)
         {
             Assemble(manualHullPrefab, manualTurretPrefab, manualHullId);
         }
+    }
+
+    // 2. ЭТАП РАЗДАЧИ ПРАВ: Вызывается, когда FishNet точно знает владельца
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        ApplyOwnershipPermissions();
     }
 
     public void Assemble(GameObject hullPrefab, GameObject turretPrefab, string hullId)
@@ -32,7 +51,7 @@ public class TankAssembler : MonoBehaviour
         hullInstance.transform.localPosition = new Vector3(0f, -0.32f, 0f);
         hullInstance.transform.localRotation = Quaternion.identity;
 
-        TankChassisController tankController = GetComponent<TankChassisController>();
+        tankController = GetComponent<TankChassisController>();
 
         TrackUVAnimator lTracksAnimator = hullInstance.transform.Find("lTrack")?.GetComponent<TrackUVAnimator>();
         TrackUVAnimator rTracksAnimator = hullInstance.transform.Find("rTrack")?.GetComponentInChildren<TrackUVAnimator>();
@@ -63,33 +82,64 @@ public class TankAssembler : MonoBehaviour
             skinSwitcher.ApplySkinById(manualSkinId);
         }
 
-        CameraController cam = GetComponentInChildren<CameraController>();
+        cam = GetComponentInChildren<CameraController>();
         if (cam != null && turretMount != null) cam.SetTarget(turretMount);
 
-        TurretController turretMountController = turretMount.GetComponent<TurretController>();
-        turretMountController?.SetCamTransform(cam != null ? cam.transform : null);
+        turretMountController = turretMount.GetComponent<TurretController>();
 
         Transform muzzlePoint = turretInstance.transform.Find("muzzle");
-        WeaponController weaponCtrl = GetComponentInChildren<WeaponController>();
+        weaponCtrl = GetComponentInChildren<WeaponController>();
         if (muzzlePoint != null && weaponCtrl != null)
         {
             weaponCtrl.SetMuzzlePoint(muzzlePoint);
         }
 
         PlayerTankBrain brain = GetComponent<PlayerTankBrain>();
-        Transform followingCamera = transform.Find("FollowingCamera");
+        followingCamera = transform.Find("FollowingCamera");
+        rb = GetComponent<Rigidbody>();
 
         if (brain != null)
+        {
+            brain.InitializeBrain(tankController, turretMountController, weaponCtrl, cam);
+        }
+
+        if (base.IsServerInitialized)
+        {
+            if (tankController != null) tankController.isLocallyControlled = true;
+            if (rb != null) rb.isKinematic = false;
+        }
+        else
+        {
+            if (tankController != null) tankController.isLocallyControlled = true;
+            if (rb != null) rb.isKinematic = false;
+        }
+    }
+
+    // Вспомогательный метод, который безопасно включает/выключает компоненты
+    private void ApplyOwnershipPermissions()
+    {
+        // Теперь base.IsOwner работает абсолютно точно!
+        bool isMyTank = base.IsOwner;
+
+        if (isMyTank)
         {
             if (weaponCtrl != null) weaponCtrl.isLocalPlayer = true;
             if (followingCamera != null) followingCamera.gameObject.SetActive(true);
 
-            brain.InitializeBrain(tankController, turretMountController, weaponCtrl, cam);
+            // Отдаем камеру нашей башне
+            if (turretMountController != null) turretMountController.SetCamTransform(cam != null ? cam.transform : null);
         }
         else
         {
             if (weaponCtrl != null) weaponCtrl.isLocalPlayer = false;
             if (followingCamera != null) followingCamera.gameObject.SetActive(false);
+            if (cam != null) cam.gameObject.SetActive(false);
+
+            // Забираем камеру у чужой башни
+            if (turretMountController != null) turretMountController.SetCamTransform(null);
+
+            AudioListener listener = GetComponentInChildren<AudioListener>();
+            if (listener != null) listener.enabled = false;
         }
     }
 }

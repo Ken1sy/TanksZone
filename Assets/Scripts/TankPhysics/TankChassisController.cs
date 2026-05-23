@@ -45,6 +45,8 @@ public class TankChassisController : MonoBehaviour
     private Vector2 inputDirection;
     private float currentEngineForceMag = 0f;
 
+    [HideInInspector] public bool isLocallyControlled = false;
+
     public void SetMoveInput(Vector2 input)
     {
         inputDirection = input;
@@ -86,6 +88,12 @@ public class TankChassisController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!isLocallyControlled)
+        {
+            UpdateTrackAnimations();
+            return;
+        }
+
         leftTrack.UpdateTracks(rb, maxRayLength, nominalRayLength, springStiffness, damping, groundLayer);
         rightTrack.UpdateTracks(rb, maxRayLength, nominalRayLength, springStiffness, damping, groundLayer);
 

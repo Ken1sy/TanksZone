@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 3950555585451684736}
   - component: {fileID: 9033243419864945346}
   - component: {fileID: 6108259022430739499}
+  - component: {fileID: 3262990353992197911}
+  - component: {fileID: 2993312780575648998}
   m_Layer: 9
   m_Name: PlayerTank
   m_TagString: Tank
@@ -84,6 +86,7 @@ MonoBehaviour:
     m_Bits: 10240
   driftMode: 0
   showGizmos: 0
+  isLocallyControlled: 0
 --- !u!114 &6059181158007522456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,9 +240,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3919e58de28352b409d76d3c2b41b1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankAssembler
-  assembleOnStart: 0
-  manualHullPrefab: {fileID: 0}
-  manualTurretPrefab: {fileID: 0}
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 3262990353992197911}
+  _networkObjectCache: {fileID: 3262990353992197911}
+  assembleOnStart: 1
+  manualHullPrefab: {fileID: 487565236925907757, guid: cf95711788731a5449352c6efd11308d, type: 3}
+  manualTurretPrefab: {fileID: 2877250269478108502, guid: f34e416b2b8170e41ba04e76f998bf87, type: 3}
   manualHullId: Hornet_Standart
   manualSkinId: nano
 --- !u!114 &3950555585451684736
@@ -254,6 +260,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b6211752d9c4f64b94fcd86f440601a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTankBrain
+  _componentIndexCache: 1
+  _addedNetworkObject: {fileID: 3262990353992197911}
+  _networkObjectCache: {fileID: 3262990353992197911}
   chassis: {fileID: 0}
   turret: {fileID: 0}
   weapon: {fileID: 0}
@@ -282,8 +291,118 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 628b899c956faa14c87d08ddd7718d79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankSkinSwitcher
+  _componentIndexCache: 2
+  _addedNetworkObject: {fileID: 3262990353992197911}
+  _networkObjectCache: {fileID: 3262990353992197911}
   skinTexturePropertyName: _SkinTexture
   skinTilingPropertyName: _SkinTiling
+--- !u!114 &3262990353992197911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775286465850185468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
+  <IsNested>k__BackingField: 0
+  WasActiveDuringEdit: 0
+  WasActiveDuringEdit_Set1: 1
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  <PredictedOwner>k__BackingField: {fileID: 0}
+  NetworkBehaviours:
+  - {fileID: 8035731802568946815}
+  - {fileID: 3950555585451684736}
+  - {fileID: 6108259022430739499}
+  - {fileID: 2993312780575648998}
+  InitializedParentNetworkBehaviour: {fileID: 0}
+  InitializedNestedNetworkObjects: []
+  RuntimeParentNetworkBehaviour: {fileID: 0}
+  RuntimeChildNetworkBehaviours: []
+  _isNetworked: 1
+  _isSpawnable: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _preventDespawnOnDisconnect: 0
+  _defaultDespawnType: 0
+  _initializedTimestamp: -8584232526576399268
+  _localLevelOfDetailCalculationType: 0
+  _useLevelOfDetail: 0
+  _useRootLevelOfDetail: 1
+  NetworkObserver: {fileID: 0}
+  _enablePrediction: 0
+  _predictionType: 0
+  _localReconcileCorrectionType: 2
+  _graphicalObject: {fileID: 0}
+  _detachGraphicalObject: 0
+  _enableStateForwarding: 1
+  _networkTransform: {fileID: 0}
+  _ownerInterpolation: 1
+  _ownerSmoothedProperties: 255
+  _adaptiveInterpolation: 3
+  _spectatorSmoothedProperties: 255
+  _spectatorInterpolation: 2
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  <PrefabId>k__BackingField: 0
+  <SpawnableCollectionId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 450372036739492749
+  SceneId: 0
+  SerializedTransformProperties:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    Scale: {x: 1, y: 1, z: 1}
+    IsValid: 1
+--- !u!114 &2993312780575648998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775286465850185468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Component.Transforming.NetworkTransform
+  _componentIndexCache: 3
+  _addedNetworkObject: {fileID: 3262990353992197911}
+  _networkObjectCache: {fileID: 3262990353992197911}
+  _componentConfiguration: 2
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 2
+  _extrapolation: 2
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  _clientAuthoritative: 0
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 0
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &6740919597804281310
 GameObject:
   m_ObjectHideFlags: 0

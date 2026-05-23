@@ -8,14 +8,17 @@ public class TankTrackDecals : MonoBehaviour
 
     [Header("Настройки декали")]
     public GameObject trackDecalPrefab;
-    public float spawnDistance = 0.5f; // Как часто оставлять след (в метрах)
-    public float raycastDistance = 2f; // Длина луча до земли
-    public LayerMask groundLayer;      // Слой земли (чтобы следы не рисовались на других танках)
+    public float spawnDistance = 0.22f;
+    public float raycastDistance = 0.5f;
+    public LayerMask groundLayer;
 
     [Header("Оптимизация")]
-    public int maxDecals = 500; // Лимит следов на один танк (чтобы не лагало)
+    public int maxDecals = 500;
 
     private Vector3 lastSpawnPosition;
+    private Vector3 lastLeftTrackPos;
+    private Vector3 lastRightTrackPos;
+
     private GameObject[] decalPool;
     private int poolIndex = 0;
     private GameObject poolContainer;
@@ -23,6 +26,8 @@ public class TankTrackDecals : MonoBehaviour
     void Start()
     {
         lastSpawnPosition = transform.position;
+        lastLeftTrackPos = leftTrackPoint.position;
+        lastRightTrackPos = rightTrackPoint.position;
 
         poolContainer = new GameObject($"TrackDecalsPool_{gameObject.name}");
 
@@ -38,36 +43,57 @@ public class TankTrackDecals : MonoBehaviour
 
     void Update()
     {
-        // Проверяем, проехал ли танк нужное расстояние
-        if (Vector3.Distance(transform.position, lastSpawnPosition) >= spawnDistance)
-        {
-            SpawnDecal(leftTrackPoint);
-            SpawnDecal(rightTrackPoint);
+        if (leftTrackPoint == null || rightTrackPoint == null) return;
 
-            lastSpawnPosition = transform.position;
+        float dist = Vector3.Distance(transform.position, lastSpawnPosition);
+
+        if (dist >= spawnDistance)
+        {
+            // Защита от телепортации (респавн или сильная сетевая коррекция)
+            if (dist > 5f)
+            {
+                lastSpawnPosition = transform.position;
+                lastLeftTrackPos = leftTrackPoint.position;
+                lastRightTrackPos = rightTrackPoint.position;
+                return;
+            }
+
+            // ========================================================
+            // НОВОЕ: Находим, сколько следов пропущено за этот кадр
+            // ========================================================
+            int steps = Mathf.FloorToInt(dist / spawnDistance);
+
+            for (int i = 1; i <= steps; i++)
+            {
+                // Вычисляем точный процент пути для идеального шага
+                float lerpFactor = (spawnDistance * i) / dist;
+
+                Vector3 lerpLeft = Vector3.Lerp(lastLeftTrackPos, leftTrackPoint.position, lerpFactor);
+                Vector3 lerpRight = Vector3.Lerp(lastRightTrackPos, rightTrackPoint.position, lerpFactor);
+
+                SpawnDecal(lerpLeft, -leftTrackPoint.up, transform.forward);
+                SpawnDecal(lerpRight, -rightTrackPoint.up, transform.forward);
+            }
+
+            // Запоминаем остаток пути (чтобы следы рисовались без сбоев ритма)
+            float totalSpawnedDist = spawnDistance * steps;
+            float finalLerp = totalSpawnedDist / dist;
+
+            lastSpawnPosition = Vector3.Lerp(lastSpawnPosition, transform.position, finalLerp);
+            lastLeftTrackPos = Vector3.Lerp(lastLeftTrackPos, leftTrackPoint.position, finalLerp);
+            lastRightTrackPos = Vector3.Lerp(lastRightTrackPos, rightTrackPoint.position, finalLerp);
         }
     }
 
-    private void SpawnDecal(Transform point)
+    private void SpawnDecal(Vector3 rayOrigin, Vector3 rayDir, Vector3 forwardDir)
     {
-        if (point == null) return;
-
-        // Пускаем луч строго вниз от точки гусеницы
-        if (Physics.Raycast(point.position, -point.up, out RaycastHit hit, raycastDistance, groundLayer))
+        if (Physics.Raycast(rayOrigin, rayDir, out RaycastHit hit, raycastDistance, groundLayer))
         {
-            // Достаем декаль из пула
             GameObject decal = decalPool[poolIndex];
             decal.SetActive(true);
-
-            // Ставим декаль в точку попадания луча
             decal.transform.position = hit.point + hit.normal * 0.02f;
+            decal.transform.rotation = Quaternion.LookRotation(-hit.normal, forwardDir);
 
-            // ВАЖНО: Правильно поворачиваем декаль.
-            // URP Decal Projector светит по оси Z. Значит, Z должен смотреть в землю (-hit.normal).
-            // А верх (Y) декали должен смотреть туда, куда едет танк (transform.forward).
-            decal.transform.rotation = Quaternion.LookRotation(-hit.normal, transform.forward);
-
-            // Сдвигаем индекс пула. Если дошли до конца - начинаем с нуля (заменяя самые старые следы)
             poolIndex++;
             if (poolIndex >= maxDecals)
             {
