@@ -54,8 +54,6 @@ public class TankChassisController : MonoBehaviour
 
     public void ApplySettings(TankSettings settings)
     {
-        if (settings == null) return;
-
         this.speed = settings.speed;
         this.acceleration = settings.acceleration;
         this.reverseAcceleration = settings.reverseAcceleration;
@@ -177,7 +175,7 @@ public class TankChassisController : MonoBehaviour
         // Читаем настройку из меню. 
         // 0 = Танковое управление (галочка снята). Танк всегда крутится куда нажато.
         // 1 = Автомобильное управление (галочка стоит). При езде назад перед уходит в обратную сторону.
-        bool isCarSteering = PlayerPrefs.GetInt("InvertReverse", 0) == 1;
+        bool isCarSteering = GameScripts.UI.SettingsMenuController.InvertReverse;
 
         // Если мы едем назад (нажата S) И игрок включил инверсию в настройках
         if (inputDirection.y < -0.01f && isCarSteering)

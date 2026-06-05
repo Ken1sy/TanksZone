@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8315940705802727244}
   - component: {fileID: 6778783573480658653}
   - component: {fileID: 4318435023661728829}
-  m_Layer: 13
+  m_Layer: 12
   m_Name: Hornet_Standart
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -50,6 +50,8 @@ Transform:
   - {fileID: 8150737894559068609}
   - {fileID: 5092794472098281779}
   - {fileID: 4053412160476397041}
+  - {fileID: 4825085841618734099}
+  - {fileID: 3009860874941371212}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2346708981705725302
@@ -161,7 +163,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5545495958274083996}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: ltpoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -194,7 +196,7 @@ GameObject:
   - component: {fileID: 5105386552652208368}
   - component: {fileID: 13459984046438907}
   - component: {fileID: 3910802143151474804}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_1
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -273,6 +275,59 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2180930521644853830
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3009860874941371212}
+  - component: {fileID: 7892483556087061718}
+  m_Layer: 13
+  m_Name: Hitbox (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3009860874941371212
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2180930521644853830}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8360175537819042235}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &7892483556087061718
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2180930521644853830}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.469596, y: 0.96881354, z: 1.3112272}
+  m_Center: {x: 0, y: 0.83129174, z: 2.595895}
 --- !u!1 &3222472058420609053
 GameObject:
   m_ObjectHideFlags: 0
@@ -284,7 +339,7 @@ GameObject:
   - component: {fileID: 4755119502126696195}
   - component: {fileID: 4373349575038023015}
   - component: {fileID: 6300601496556637471}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_5
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -373,7 +428,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2823632889193325474}
   - component: {fileID: 5123721469110835512}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: mount
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -411,6 +466,59 @@ MonoBehaviour:
   acceleration: 720
   deceleration: 750
   canMove: 1
+--- !u!1 &3601449733744319404
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4825085841618734099}
+  - component: {fileID: 6248140893893989490}
+  m_Layer: 13
+  m_Name: Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4825085841618734099
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3601449733744319404}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8360175537819042235}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6248140893893989490
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3601449733744319404}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.469596, y: 1.251956, z: 4.6402407}
+  m_Center: {x: 0, y: 0.97286296, z: -0.38775444}
 --- !u!1 &3634849693848641107
 GameObject:
   m_ObjectHideFlags: 0
@@ -422,7 +530,7 @@ GameObject:
   - component: {fileID: 6583421992769602470}
   - component: {fileID: 4318330007875444971}
   - component: {fileID: 947517537993501663}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_4
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -512,7 +620,7 @@ GameObject:
   - component: {fileID: 7685048722985996153}
   - component: {fileID: 6964609267157473054}
   - component: {fileID: 2599141082672582519}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_3
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -602,7 +710,7 @@ GameObject:
   - component: {fileID: 5792240211405744956}
   - component: {fileID: 8775757779009513374}
   - component: {fileID: 9063203611626338405}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_2
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -692,7 +800,7 @@ GameObject:
   - component: {fileID: 5092794472098281779}
   - component: {fileID: 1733119734208465409}
   - component: {fileID: 1250243455971444469}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_b
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -782,7 +890,7 @@ GameObject:
   - component: {fileID: 4634267004328082399}
   - component: {fileID: 5168809389321350566}
   - component: {fileID: 5433601579008363113}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_2
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -872,7 +980,7 @@ GameObject:
   - component: {fileID: 4053412160476397041}
   - component: {fileID: 8975668563428788657}
   - component: {fileID: 7263032714176618136}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_f
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -962,7 +1070,7 @@ GameObject:
   - component: {fileID: 8979347288931850736}
   - component: {fileID: 7311327591483126623}
   - component: {fileID: 194365070354294399}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_3
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1053,7 +1161,7 @@ GameObject:
   - component: {fileID: 5071023688386764388}
   - component: {fileID: 5371553239339136664}
   - component: {fileID: 3516780755860121524}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rTrack
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1160,7 +1268,7 @@ GameObject:
   - component: {fileID: 3101913947759639852}
   - component: {fileID: 5820657930128494801}
   - component: {fileID: 1597224574634301245}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_4
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1251,7 +1359,7 @@ GameObject:
   - component: {fileID: 3702237367713448686}
   - component: {fileID: 8405706871719240178}
   - component: {fileID: 7708514400497963157}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lTrack
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1358,7 +1466,7 @@ GameObject:
   - component: {fileID: 1225295013627461538}
   - component: {fileID: 1016829349757953486}
   - component: {fileID: 7269318474226008818}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_f
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1448,7 +1556,7 @@ GameObject:
   - component: {fileID: 8150737894559068609}
   - component: {fileID: 8620847597920214339}
   - component: {fileID: 626820565215333653}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_5
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1538,7 +1646,7 @@ GameObject:
   - component: {fileID: 4212168497962432458}
   - component: {fileID: 2497687111024299454}
   - component: {fileID: 3116622975969034448}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_b
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1626,7 +1734,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2658616046885314568}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rtpoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1659,7 +1767,7 @@ GameObject:
   - component: {fileID: 1782346858426463442}
   - component: {fileID: 6806656520377990340}
   - component: {fileID: 4333618970098455628}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_1
   m_TagString: Tank
   m_Icon: {fileID: 0}

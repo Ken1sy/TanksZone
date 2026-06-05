@@ -5,17 +5,22 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 public class GarageUIManager : MonoBehaviour
 {
+    public static GarageUIManager Instance;
+
     [Header("Управление интерфейсом и Камерой")]
-    public GameObject mainUIElement; // Массив элементов, которые нужно скрывать (список пушек, правая панель)
-    public GarageCamera garageCameraScript; // Ссылка на наш новый скрипт камеры
+    public GameObject mainUIElement;
+    public GarageCamera garageCameraScript;
     public GarageItemsManager itemsManager;
-    private bool isMainUIOpen = false; // Состояние по умолчанию
+
+    private bool isMainUIOpen = false;
 
     [Header("UI Элементы Верхней Панели")]
-    public TMP_Text xpAndRankText; // Текст внутри прогресс-бара: "(0 / 100) Новобранец Игрок"
-    public TMP_Text crystalsText;  // Текст с количеством кристаллов
+    public TMP_Text xpAndRankText;
+    public TMP_Text crystalsText;
     public Slider xpProgressBar;
     public Image rankIconImage;
 
@@ -24,18 +29,24 @@ public class GarageUIManager : MonoBehaviour
 
     [Header("Настройки и Управление")]
     public GameObject settingsPanel;
-    public Image muteButtonImage;    // Ссылка на картинку внутри кнопки звука
-    public Sprite soundOnSprite;     // Иконка включенного звука
+    public Image muteButtonImage;
+    public Sprite soundOnSprite;
     public Sprite soundOffSprite;
-    private bool isMuted = false;
 
-    [Header("Данные Игрока (Текущие)")]
+    [Header("Новое: Управление Битвами и Сценами")]
+    public GameObject battleListPanel;
+    public GameObject[] garageOnlyUIElements;
+    public GameObject[] battleOnlyUIElements;
+    public GameObject exitConfirmationPopup;
+
+    public string battleSceneName = "03_BattleMap";
+    public string garageSceneName = "02_Garage";
+
+    private bool isInBattle = false;
     private int currentXp = 0;
     private int crystals = 0;
     private string playerName = "Командир";
 
-    // Таблица званий (перенесена из твоего документа)
-    // Индексы совпадают: 0 = Новобранец, 1 = Рядовой и т.д.
     private readonly int[] rankXpThresholds = {
         0, 100, 500, 1500, 3700, 7100, 12300, 20000, 29000, 41000,
         57000, 76000, 98000, 125000, 156000, 192000, 233000, 280000,
@@ -51,9 +62,33 @@ public class GarageUIManager : MonoBehaviour
         "Генерал-майор", "Генерал-лейтенант", "Генерал", "Маршал", "Фельдмаршал", "Командор", "Генералиссимус", "Легенда"
     };
 
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            Transform rootObj = transform.root;
+            DontDestroyOnLoad(rootObj.gameObject);
+        }
+        else
+        {
+            Destroy(transform.root.gameObject);
+            return;
+        }
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     private void Start()
     {
-        // Включаем курсор для интерфейса гаража
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
@@ -62,44 +97,91 @@ public class GarageUIManager : MonoBehaviour
         if (xpProgressBar != null) xpProgressBar.value = 0f;
 
         if (settingsPanel != null) settingsPanel.SetActive(false);
-
+        if (exitConfirmationPopup != null) exitConfirmationPopup.SetActive(false);
         if (mainUIElement != null) mainUIElement.SetActive(isMainUIOpen);
 
-        if (muteButtonImage != null && soundOnSprite != null && soundOffSprite != null)
-        {
-            muteButtonImage.sprite = isMuted ? soundOffSprite : soundOnSprite;
-        }
+        SyncMuteIcon(GameScripts.UI.SettingsMenuController.IsMuted);
 
         if (garageCameraScript != null) garageCameraScript.SetUIState(isMainUIOpen);
 
+        UpdateUIVisibilityForScene(true);
         LoadPlayerAccountInfo();
     }
 
-    // 1. Сначала узнаем Никнейм игрока
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        UnityEngine.EventSystems.EventSystem es = FindAnyObjectByType<UnityEngine.EventSystems.EventSystem>();
+        if (es == null)
+        {
+            GameObject esObj = new GameObject("EventSystem");
+            esObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
+            esObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+        }
+
+        if (scene.name.Contains(battleSceneName))
+        {
+            isInBattle = true;
+            UpdateUIVisibilityForScene(false);
+
+            if (mainUIElement != null) mainUIElement.SetActive(false);
+            if (battleListPanel != null) battleListPanel.SetActive(false);
+            isMainUIOpen = false;
+
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else if (scene.name.Contains(garageSceneName))
+        {
+            isInBattle = false;
+            UpdateUIVisibilityForScene(true);
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+
+            garageCameraScript = FindAnyObjectByType<GarageCamera>();
+            if (garageCameraScript != null) garageCameraScript.SetUIState(isMainUIOpen);
+
+            LoadPlayerAccountInfo();
+
+            if (itemsManager != null) itemsManager.PopulateGarage(true);
+        }
+    }
+
+    private void UpdateUIVisibilityForScene(bool isGarage)
+    {
+        if (garageOnlyUIElements != null)
+        {
+            foreach (var el in garageOnlyUIElements)
+            {
+                if (el != null) el.SetActive(isGarage);
+            }
+        }
+
+        if (battleOnlyUIElements != null)
+        {
+            foreach (var el in battleOnlyUIElements)
+            {
+                if (el != null) el.SetActive(!isGarage);
+            }
+        }
+    }
+
     private void LoadPlayerAccountInfo()
     {
         PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest(),
             result =>
             {
-                // Сначала пробуем взять Display Name
                 playerName = result.AccountInfo.TitleInfo.DisplayName;
-
-                // Если он пустой, берем Username (который мы генерировали при регистрации)
                 if (string.IsNullOrEmpty(playerName))
                 {
                     playerName = result.AccountInfo.Username;
-
-                    // И сразу же чиним базу данных: записываем Username в поле DisplayName
-                    if (!string.IsNullOrEmpty(playerName))
-                    {
-                        FixDisplayNameInDatabase(playerName);
-                    }
+                    if (!string.IsNullOrEmpty(playerName)) FixDisplayNameInDatabase(playerName);
                 }
 
-                // Защита от непредвиденных ошибок
-                if (string.IsNullOrEmpty(playerName)) playerName = "Без Имени";
+                PlayerPrefs.SetString("MyNickname", playerName);
+                PlayerPrefs.Save();
 
-                // Переходим к загрузке опыта и кристаллов
+                if (string.IsNullOrEmpty(playerName)) playerName = "Без Имени";
                 LoadUserData();
             },
             error =>
@@ -109,6 +191,7 @@ public class GarageUIManager : MonoBehaviour
             }
         );
     }
+
     private void FixDisplayNameInDatabase(string newName)
     {
         var request = new UpdateUserTitleDisplayNameRequest { DisplayName = newName };
@@ -118,13 +201,11 @@ public class GarageUIManager : MonoBehaviour
         );
     }
 
-    // 2. Узнаем опыт и кристаллы из базы данных PlayFab
     private void LoadUserData()
     {
         PlayFabClientAPI.GetUserData(new GetUserDataRequest(),
             result =>
             {
-                // Проверяем, есть ли у этого игрока сохраненные данные
                 if (result.Data != null && result.Data.ContainsKey("XP") && result.Data.ContainsKey("Crystals"))
                 {
                     currentXp = int.Parse(result.Data["XP"].Value);
@@ -133,7 +214,6 @@ public class GarageUIManager : MonoBehaviour
                 }
                 else
                 {
-                    // ДАННЫХ НЕТ: Это новый игрок! Выдаем стартовый капитал.
                     SaveInitialDataForNewPlayer();
                 }
             },
@@ -141,7 +221,6 @@ public class GarageUIManager : MonoBehaviour
         );
     }
 
-    // 3. Создаем начальные данные для новичка и сохраняем их в базу
     private void SaveInitialDataForNewPlayer()
     {
         var request = new UpdateUserDataRequest
@@ -149,29 +228,25 @@ public class GarageUIManager : MonoBehaviour
             Data = new Dictionary<string, string>
             {
                 { "XP", "0" },
-                { "Crystals", "1000" } // Выдаем 500 кристаллов новичку!
+                { "Crystals", "5000" }
             }
         };
 
         PlayFabClientAPI.UpdateUserData(request,
             result =>
             {
-                Debug.Log("Новому игроку успешно выдан стартовый капитал!");
                 currentXp = 0;
-                crystals = 1000;
+                crystals = 5000;
                 UpdateTopPanelUI();
             },
             error => Debug.LogError("Ошибка сохранения начальных данных: " + error.ErrorMessage)
         );
     }
 
-    // 4. Отрисовываем всё на экране (вычисляем звание)
     private void UpdateTopPanelUI()
     {
-        // Обновляем текст кристаллов
         if (crystalsText != null) crystalsText.text = crystals.ToString();
 
-        // Вычисляем текущее звание на основе опыта
         int currentRankIndex = 0;
         for (int i = rankXpThresholds.Length - 1; i >= 0; i--)
         {
@@ -186,16 +261,19 @@ public class GarageUIManager : MonoBehaviour
         int currentRankBaseXp = rankXpThresholds[currentRankIndex];
         int nextRankXp = 0;
 
-        if (currentRankIndex < rankXpThresholds.Length - 1)
+        int expectedRankValue = currentRankIndex + 1;
+        PlayerPrefs.SetInt("MyRank", expectedRankValue);
+        PlayerPrefs.Save();
+
+        // ИСПРАВЛЕНИЕ 3: Теперь мы оповещаем СВОЙ ТАНК в игре о том, что у нас повысился ранг!
+        if (PlayerTankBrain.LocalInstance != null)
         {
-            nextRankXp = rankXpThresholds[currentRankIndex + 1];
-        }
-        else
-        {
-            nextRankXp = currentXp; // Достигнуто максимальное звание
+            PlayerTankBrain.LocalInstance.CmdUpdateRank(expectedRankValue);
         }
 
-        // Обновляем текст
+        if (currentRankIndex < rankXpThresholds.Length - 1) nextRankXp = rankXpThresholds[currentRankIndex + 1];
+        else nextRankXp = currentXp;
+
         if (xpAndRankText != null)
         {
             xpAndRankText.text = $"{currentXp} / {nextRankXp} {currentRankName} {playerName}";
@@ -203,50 +281,53 @@ public class GarageUIManager : MonoBehaviour
 
         if (rankIconImage != null && rankIcons != null && rankIcons.Length > 0)
         {
-            // Берем индекс текущего звания. Если иконок в массиве меньше, чем званий, 
-            // берем последнюю доступную иконку, чтобы избежать ошибки
             int iconIndex = Mathf.Clamp(currentRankIndex, 0, rankIcons.Length - 1);
-
-            if (rankIcons[iconIndex] != null)
-            {
-                rankIconImage.sprite = rankIcons[iconIndex];
-            }
+            if (rankIcons[iconIndex] != null) rankIconImage.sprite = rankIcons[iconIndex];
         }
 
-
-        // Обновляем заполнение полоски прогресса
         if (xpProgressBar != null)
         {
-            if (currentRankIndex >= rankXpThresholds.Length - 1)
-            {
-                xpProgressBar.value = 1f;
-            }
+            if (currentRankIndex >= rankXpThresholds.Length - 1) xpProgressBar.value = 1f;
             else
             {
                 float xpIntoCurrentRank = currentXp - currentRankBaseXp;
                 float xpNeededForNextRank = nextRankXp - currentRankBaseXp;
-                // Slider по умолчанию работает от 0 до 1, поэтому передаем процент (доли единицы)
                 xpProgressBar.value = xpIntoCurrentRank / xpNeededForNextRank;
             }
         }
     }
 
-    // Этот метод вызывается менеджером предметов при покупке
+    public void AddBattleRewards(int xpAdded, int crystalsAdded)
+    {
+        currentXp += xpAdded;
+        crystals += crystalsAdded;
+        UpdateTopPanelUI();
+
+        var request = new UpdateUserDataRequest
+        {
+            Data = new Dictionary<string, string>
+            {
+                { "XP", currentXp.ToString() },
+                { "Crystals", crystals.ToString() }
+            }
+        };
+
+        PlayFabClientAPI.UpdateUserData(request,
+            res => Debug.Log($"[Бой] Вы уничтожили танк! Получено {xpAdded} опыта и {crystalsAdded} крис."),
+            err => Debug.LogError("[Бой] Ошибка сохранения наград: " + err.ErrorMessage)
+        );
+    }
+
     public bool TrySpendCrystals(int amount)
     {
         if (crystals >= amount)
         {
-            // Списываем локально
             crystals -= amount;
             UpdateTopPanelUI();
 
-            // Сохраняем новые данные в базу PlayFab
             var request = new UpdateUserDataRequest
             {
-                Data = new Dictionary<string, string>
-                {
-                    { "Crystals", crystals.ToString() }
-                }
+                Data = new Dictionary<string, string> { { "Crystals", crystals.ToString() } }
             };
 
             PlayFabClientAPI.UpdateUserData(request,
@@ -256,86 +337,123 @@ public class GarageUIManager : MonoBehaviour
 
             return true;
         }
-
-        // Денег не хватило
         return false;
     }
 
-    // ==========================================
-    // МЕТОДЫ ДЛЯ КНОПОК УПРАВЛЕНИЯ
-    // ==========================================
     public void ToggleMainGarageUI()
     {
         isMainUIOpen = !isMainUIOpen;
+        if (mainUIElement != null) mainUIElement.SetActive(isMainUIOpen);
+        if (garageCameraScript != null) garageCameraScript.SetUIState(isMainUIOpen);
+        if (itemsManager != null) itemsManager.OnUIStateChanged(isMainUIOpen);
+        if (isMainUIOpen && battleListPanel != null) battleListPanel.SetActive(false);
+    }
 
-        // Включаем или выключаем основные элементы
-        if (mainUIElement != null)
+    public void ToggleBattleListPanel()
+    {
+        if (battleListPanel != null)
         {
-            mainUIElement.SetActive(isMainUIOpen);
-        }
-
-        // Говорим камере плавно сменить ракурс
-        if (garageCameraScript != null)
-        {
-            garageCameraScript.SetUIState(isMainUIOpen);
-        }
-
-        if (itemsManager != null)
-        {
-            itemsManager.OnUIStateChanged(isMainUIOpen);
+            bool isGoingToOpen = !battleListPanel.activeSelf;
+            battleListPanel.SetActive(isGoingToOpen);
+            if (isGoingToOpen && isMainUIOpen) ToggleMainGarageUI();
         }
     }
 
-    // Кнопка: Настройки (показать/скрыть панель)
     public void ToggleSettingsPanel()
     {
         if (settingsPanel != null)
         {
-            // Если панель была включена, она выключится, и наоборот
-            settingsPanel.SetActive(!settingsPanel.activeSelf);
+            bool willBeOpen = !settingsPanel.activeSelf;
+            settingsPanel.SetActive(willBeOpen);
+
+            if (willBeOpen)
+            {
+                // ИСПРАВЛЕНИЕ 2: Выдвигаем панель настроек на самый передний план (поверх всех ХП)
+                settingsPanel.transform.SetAsLastSibling();
+            }
+
+            if (isInBattle)
+            {
+                if (willBeOpen)
+                {
+                    Cursor.visible = true;
+                    Cursor.lockState = CursorLockMode.None;
+                }
+                else
+                {
+                    if (exitConfirmationPopup == null || !exitConfirmationPopup.activeSelf)
+                    {
+                        Cursor.visible = false;
+                        Cursor.lockState = CursorLockMode.Locked;
+                    }
+                }
+            }
         }
     }
 
-    // Кнопка: Включение/выключение звука
     public void ToggleMute()
     {
-        isMuted = !isMuted;
-        // AudioListener.volume управляет глобальной громкостью в Unity
-        // 0f = полная тишина, 1f = 100% громкости
-        AudioListener.volume = isMuted ? 0f : 1f;
+        GameScripts.UI.SettingsMenuController.ToggleMuteGlobal();
+    }
 
-        // Меняем иконку на кнопке
+    public void SyncMuteIcon(bool isMutedState)
+    {
         if (muteButtonImage != null && soundOnSprite != null && soundOffSprite != null)
         {
-            muteButtonImage.sprite = isMuted ? soundOffSprite : soundOnSprite;
+            muteButtonImage.sprite = isMutedState ? soundOffSprite : soundOnSprite;
+        }
+    }
+
+    public void OnQuitButtonPressed()
+    {
+        if (isInBattle)
+        {
+            if (exitConfirmationPopup != null)
+            {
+                exitConfirmationPopup.SetActive(true);
+                // На всякий случай попап выхода тоже выдвигаем вперед
+                exitConfirmationPopup.transform.SetAsLastSibling();
+
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else ConfirmExitBattle();
+        }
+        else QuitGame();
+    }
+
+    public void ConfirmExitBattle()
+    {
+        if (exitConfirmationPopup != null) exitConfirmationPopup.SetActive(false);
+        if (ServerRoomManager.Instance != null) ServerRoomManager.Instance.RequestLeaveRoom();
+        SceneManager.LoadScene(garageSceneName);
+    }
+
+    public void CancelExitBattle()
+    {
+        if (exitConfirmationPopup != null) exitConfirmationPopup.SetActive(false);
+
+        if (settingsPanel == null || !settingsPanel.activeSelf)
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 
     public void QuitGame()
     {
-        Debug.Log("Выход из игры...");
         Application.Quit();
-
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
-
     }
+
     private void OnApplicationQuit()
     {
         if (InstanceFinder.NetworkManager != null)
         {
-            if (InstanceFinder.ServerManager != null)
-            {
-                InstanceFinder.ServerManager.StopConnection(true);
-            }
-
-            if (InstanceFinder.ClientManager != null)
-            {
-                InstanceFinder.ClientManager.StopConnection();
-            }
-
-            Debug.Log("Сетевые соединения успешно закрыты. Выходим...");
+            if (InstanceFinder.ServerManager != null) InstanceFinder.ServerManager.StopConnection(true);
+            if (InstanceFinder.ClientManager != null) InstanceFinder.ClientManager.StopConnection();
         }
     }
 }

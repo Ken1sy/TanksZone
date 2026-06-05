@@ -1,19 +1,34 @@
 using GameScripts.AIM;
 using GameScripts.Camera;
 using System.IO;
+using System.Collections.Generic;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using UnityEngine;
 
 public class TankAssembler : NetworkBehaviour
 {
-    [Header("Настройки для Болванок (Ручной спавн)")]
-    public bool assembleOnStart = false;
-    public GameObject manualHullPrefab;
-    public GameObject manualTurretPrefab;
-    public string manualHullId = "Hornet_Standart";
-    public string manualSkinId = "blue";
+    [System.Serializable]
+    public class TankModelComponent
+    {
+        public string id;
+        public GameObject prefab; 
+    }
 
-    // Сохраняем ссылки на компоненты, чтобы выдать им права позже
+    [Header("База Префабов (Заполни в инспекторе!)")]
+    public List<TankModelComponent> availableHulls;
+    public List<TankModelComponent> availableTurrets;
+
+    [Header("Сглаживание FishNet (Отделение визуала)")]
+    [Tooltip("Пустой объект внутри танка, в который будут спавниться модели. Нужен для плавности NetworkTransform.")]
+    public Transform visualsRoot;
+
+    public readonly SyncVar<string> syncHullId = new SyncVar<string>();
+    public readonly SyncVar<string> syncTurretId = new SyncVar<string>();
+    public readonly SyncVar<string> syncSkinId = new SyncVar<string>();
+    public readonly SyncVar<TankSettings> syncSettings = new SyncVar<TankSettings>();
+
+    // Сохраняем ссылки на компоненты
     private TankChassisController tankController;
     private TurretController turretMountController;
     private WeaponController weaponCtrl;
@@ -21,33 +36,102 @@ public class TankAssembler : NetworkBehaviour
     private Transform followingCamera;
     private Rigidbody rb;
 
-    // 1. ЭТАП СБОРКИ: Вызывается самым первым
-    public override void OnStartNetwork()
-    {
-        base.OnStartNetwork();
+    private bool _isAssembled = false;
 
-        if (assembleOnStart && manualHullPrefab != null && manualTurretPrefab != null)
-        {
-            Assemble(manualHullPrefab, manualTurretPrefab, manualHullId);
-        }
+    private void Awake()
+    {
+        // Подписываемся на изменение сетевых переменных (вместо старого атрибута OnChange)
+        syncHullId.OnChange += OnEquipmentChanged;
+        syncTurretId.OnChange += OnEquipmentChanged;
+        syncSkinId.OnChange += OnEquipmentChanged;
+        syncSettings.OnChange += OnSettingsChanged;
     }
 
-    // 2. ЭТАП РАЗДАЧИ ПРАВ: Вызывается, когда FishNet точно знает владельца
     public override void OnStartClient()
     {
         base.OnStartClient();
-        ApplyOwnershipPermissions();
+
+        // Если это наш собственный танк, мы рассказываем Серверу о нашей экипировке из Гаража
+        if (base.IsOwner)
+        {
+            CmdSetEquipment(TankSetupData.SelectedHullID, TankSetupData.SelectedTurretID, TankSetupData.SelectedSkinID);
+        }
     }
 
-    public void Assemble(GameObject hullPrefab, GameObject turretPrefab, string hullId)
+    // Запрос от клиента к серверу: "Установи мою экипировку"
+    [ServerRpc]
+    private void CmdSetEquipment(string hull, string turret, string skin)
     {
-        if (hullPrefab == null || turretPrefab == null) return;
+        syncHullId.Value = hull;
+        syncTurretId.Value = turret;
+        syncSkinId.Value = skin;
 
-        this.manualHullPrefab = hullPrefab;
-        this.manualTurretPrefab = turretPrefab;
-        this.manualHullId = hullId;
+        string path = Path.Combine(Application.streamingAssetsPath, "Configs", hull + ".cfg");
+        if (File.Exists(path))
+        {
+            string jsonText = File.ReadAllText(path);
+            TankSettings loadedSettings = JsonUtility.FromJson<TankSettings>(jsonText);
 
-        GameObject hullInstance = Instantiate(hullPrefab, this.transform);
+            // Записываем настройки в SyncVar, и FishNet мгновенно рассылает их всем клиентам!
+            syncSettings.Value = loadedSettings;
+        }
+        else
+        {
+            Debug.LogError($"[TankAssembler] ОШИБКА НА СЕРВЕРЕ: Файл {hull}.cfg не найден! Физика может сломаться!");
+        }
+
+        TryAssemble();
+    }
+
+    private void OnEquipmentChanged(string oldVal, string newVal, bool asServer)
+    {
+        if (asServer) return;
+        TryAssemble();
+    }
+    private void OnSettingsChanged(TankSettings oldVal, TankSettings newVal, bool asServer)
+    {
+        if (asServer) return;
+        TryAssemble();
+    }
+
+
+    private void TryAssemble()
+    {
+        if (_isAssembled) return;
+
+        if (string.IsNullOrEmpty(syncHullId.Value) || string.IsNullOrEmpty(syncTurretId.Value) || string.IsNullOrEmpty(syncSkinId.Value)) return;
+
+        if (syncSettings.Value.weight <= 0) return;
+
+        GameObject hullPrefab = GetPrefabById(availableHulls, syncHullId.Value);
+        GameObject turretPrefab = GetPrefabById(availableTurrets, syncTurretId.Value);
+
+        if (hullPrefab == null || turretPrefab == null)
+        {
+            Debug.LogError($"[TankAssembler] ОШИБКА: Префаб для {syncHullId.Value} или {syncTurretId.Value} не найден в базе TankAssembler! Добавьте их в списки Available Hulls/Turrets в префабе PlayerTank!");
+            return;
+        }
+
+        Assemble(hullPrefab, turretPrefab, syncHullId.Value, syncSkinId.Value);
+        _isAssembled = true;
+    }
+
+    private GameObject GetPrefabById(List<TankModelComponent> list, string id)
+    {
+        foreach (var comp in list)
+        {
+            if (comp.id == id) return comp.prefab;
+        }
+        return null;
+    }
+
+    private void Assemble(GameObject hullPrefab, GameObject turretPrefab, string hullId, string skinId)
+    {
+        Debug.Log($"[TankAssembler] Сборка танка. Hull: {hullId}, Turret: {turretPrefab.name}, Skin: {skinId}");
+
+        Transform spawnParent = visualsRoot != null ? visualsRoot : this.transform;
+
+        GameObject hullInstance = Instantiate(hullPrefab, spawnParent);
         hullInstance.transform.localPosition = new Vector3(0f, -0.32f, 0f);
         hullInstance.transform.localRotation = Quaternion.identity;
 
@@ -59,12 +143,10 @@ public class TankAssembler : NetworkBehaviour
         if (tankController != null && lTracksAnimator != null && rTracksAnimator != null)
             tankController.SetTrackAnimators(lTracksAnimator, rTracksAnimator);
 
-        string path = Path.Combine(Application.streamingAssetsPath, "Configs", hullId + ".cfg");
-        if (File.Exists(path))
+        if (tankController != null)
         {
-            string jsonText = File.ReadAllText(path);
-            TankSettings loadedSettings = JsonUtility.FromJson<TankSettings>(jsonText);
-            if (tankController != null) tankController.ApplySettings(loadedSettings);
+            tankController.ApplySettings(syncSettings.Value);
+            Debug.Log($"[TankAssembler] Сетевой конфиг {hullId} успешно применен к шасси!");
         }
 
         Transform turretMount = hullInstance.transform.Find("mount");
@@ -79,7 +161,7 @@ public class TankAssembler : NetworkBehaviour
             Renderer turretRend = turretInstance.GetComponent<Renderer>();
 
             skinSwitcher.SetRenderers(hullRend, turretRend);
-            skinSwitcher.ApplySkinById(manualSkinId);
+            skinSwitcher.ApplySkinById(skinId);
         }
 
         cam = GetComponentInChildren<CameraController>();
@@ -101,45 +183,41 @@ public class TankAssembler : NetworkBehaviour
         if (brain != null)
         {
             brain.InitializeBrain(tankController, turretMountController, weaponCtrl, cam);
+            if (base.IsServerInitialized)
+            {
+                brain.InitializeHealth(syncSettings.Value.maxHealth);
+            }
         }
 
-        if (base.IsServerInitialized)
-        {
-            if (tankController != null) tankController.isLocallyControlled = true;
-            if (rb != null) rb.isKinematic = false;
-        }
-        else
-        {
-            if (tankController != null) tankController.isLocallyControlled = true;
-            if (rb != null) rb.isKinematic = false;
-        }
+        // ВАЖНО: Раздаем права (isKinematic и управление) только ПОСЛЕ того как всё собрано!
+        ApplyOwnershipPermissions();
     }
 
-    // Вспомогательный метод, который безопасно включает/выключает компоненты
     private void ApplyOwnershipPermissions()
     {
-        // Теперь base.IsOwner работает абсолютно точно!
         bool isMyTank = base.IsOwner;
 
         if (isMyTank)
         {
             if (weaponCtrl != null) weaponCtrl.isLocalPlayer = true;
             if (followingCamera != null) followingCamera.gameObject.SetActive(true);
-
-            // Отдаем камеру нашей башне
             if (turretMountController != null) turretMountController.SetCamTransform(cam != null ? cam.transform : null);
+
+            if (tankController != null) tankController.isLocallyControlled = true;
+            if (rb != null) rb.isKinematic = false;
         }
         else
         {
             if (weaponCtrl != null) weaponCtrl.isLocalPlayer = false;
             if (followingCamera != null) followingCamera.gameObject.SetActive(false);
             if (cam != null) cam.gameObject.SetActive(false);
-
-            // Забираем камеру у чужой башни
             if (turretMountController != null) turretMountController.SetCamTransform(null);
 
             AudioListener listener = GetComponentInChildren<AudioListener>();
             if (listener != null) listener.enabled = false;
+
+            if (tankController != null) tankController.isLocallyControlled = false;
+            if (rb != null) rb.isKinematic = true;
         }
     }
 }

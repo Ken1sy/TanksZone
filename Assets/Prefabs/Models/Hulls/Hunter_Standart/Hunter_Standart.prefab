@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7002756783099962673}
   - component: {fileID: 4510007961798991134}
   - component: {fileID: 3917696593820944220}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_5
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 8371919046702270442}
   - component: {fileID: 1212377211114717913}
   - component: {fileID: 7396820154325055700}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_f
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -190,7 +190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3154625695417392021}
   - component: {fileID: 6900057722340405776}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: mount
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -239,7 +239,7 @@ GameObject:
   - component: {fileID: 5349295745319216223}
   - component: {fileID: 2845037790619911010}
   - component: {fileID: 3226198647981665032}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_b
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -327,7 +327,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3460416907011319670}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: ltpoint
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -349,6 +349,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7965010582478730541}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2141152131501591709
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5014983403827317012}
+  - component: {fileID: 8733349553326436730}
+  m_Layer: 13
+  m_Name: Hitbox (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5014983403827317012
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2141152131501591709}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5577670036198708245}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &8733349553326436730
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2141152131501591709}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.88238144, y: 0.84348726, z: 5.8083014}
+  m_Center: {x: 1.540039, y: 0.7907852, z: 0.06517959}
 --- !u!1 &2434357868476036890
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,7 +413,7 @@ GameObject:
   - component: {fileID: 7263460849849835344}
   - component: {fileID: 3958922006033449845}
   - component: {fileID: 6102187286215785947}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_3
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -450,7 +503,7 @@ GameObject:
   - component: {fileID: 7852889021470719051}
   - component: {fileID: 6291294957460029318}
   - component: {fileID: 7553856369637583085}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_4
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -540,7 +593,7 @@ GameObject:
   - component: {fileID: 1892286832005878936}
   - component: {fileID: 7444560101790881193}
   - component: {fileID: 3747802420169176253}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_3
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -630,7 +683,7 @@ GameObject:
   - component: {fileID: 4643117002820088880}
   - component: {fileID: 4345010378392937225}
   - component: {fileID: 2918111402825632919}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_5
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -720,7 +773,7 @@ GameObject:
   - component: {fileID: 725650893568229189}
   - component: {fileID: 4861370114414025186}
   - component: {fileID: 6767794829989378917}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_f
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -810,7 +863,7 @@ GameObject:
   - component: {fileID: 4935696886740946618}
   - component: {fileID: 3404427030379120583}
   - component: {fileID: 9029320904313405768}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_2
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -900,7 +953,7 @@ GameObject:
   - component: {fileID: 998695249900279116}
   - component: {fileID: 1416981750898631455}
   - component: {fileID: 8509270271241350337}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_4
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -979,6 +1032,59 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &4385250300704087279
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5636904636977127783}
+  - component: {fileID: 3977371904398526337}
+  m_Layer: 13
+  m_Name: Hitbox (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5636904636977127783
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4385250300704087279}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5577670036198708245}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3977371904398526337
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4385250300704087279}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.6446657, y: 0.38177872, z: 2.425228}
+  m_Center: {x: -1.417398, y: 1.3991456, z: -1.6304002}
 --- !u!1 &4751619783663959756
 GameObject:
   m_ObjectHideFlags: 0
@@ -991,7 +1097,7 @@ GameObject:
   - component: {fileID: 660065592365919647}
   - component: {fileID: 2269066838909538711}
   - component: {fileID: 1235660787632179979}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rTrack
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1087,6 +1193,165 @@ MonoBehaviour:
   materialIndex: 0
   texturePropertyName: _BaseMap
   scrollAxis: {x: -0.65, y: 0}
+--- !u!1 &4803990472394608969
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3069974169424958581}
+  - component: {fileID: 5015884536058522314}
+  m_Layer: 13
+  m_Name: Hitbox (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3069974169424958581
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4803990472394608969}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5577670036198708245}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5015884536058522314
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4803990472394608969}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.6446657, y: 0.38177872, z: 2.425228}
+  m_Center: {x: 1.417398, y: 1.3991456, z: -1.6304002}
+--- !u!1 &5567738858427050370
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6467096087680035139}
+  - component: {fileID: 4897167163170306195}
+  m_Layer: 13
+  m_Name: Hitbox (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6467096087680035139
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5567738858427050370}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5577670036198708245}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &4897167163170306195
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5567738858427050370}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.1817803, y: 0.8767319, z: 1.245069}
+  m_Center: {x: -0.0030846596, y: 0.9085059, z: 2.3446681}
+--- !u!1 &5697380599997285937
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2349728925999456932}
+  - component: {fileID: 7854767336095821030}
+  m_Layer: 13
+  m_Name: Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2349728925999456932
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5697380599997285937}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5577670036198708245}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &7854767336095821030
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5697380599997285937}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.1817803, y: 1.3822267, z: 4.5453286}
+  m_Center: {x: -0.0030846596, y: 1.0601546, z: -0.56630677}
 --- !u!1 &6043102415743083286
 GameObject:
   m_ObjectHideFlags: 0
@@ -1100,7 +1365,7 @@ GameObject:
   - component: {fileID: 1608715759493478102}
   - component: {fileID: 5106736304795264607}
   - component: {fileID: 7724739887202394717}
-  m_Layer: 13
+  m_Layer: 12
   m_Name: Hunter_Standart
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1137,6 +1402,12 @@ Transform:
   - {fileID: 4643117002820088880}
   - {fileID: 5289583044474353294}
   - {fileID: 8371919046702270442}
+  - {fileID: 2349728925999456932}
+  - {fileID: 7889239513720110081}
+  - {fileID: 5014983403827317012}
+  - {fileID: 5636904636977127783}
+  - {fileID: 3069974169424958581}
+  - {fileID: 6467096087680035139}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2692649464256905861
@@ -1250,7 +1521,7 @@ GameObject:
   - component: {fileID: 8652705229562723827}
   - component: {fileID: 8335401346200244386}
   - component: {fileID: 5796225432179983370}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_1
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1340,7 +1611,7 @@ GameObject:
   - component: {fileID: 2594935041487748712}
   - component: {fileID: 6595009043288770304}
   - component: {fileID: 5725588649338987378}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_1
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1431,7 +1702,7 @@ GameObject:
   - component: {fileID: 8506726930966829324}
   - component: {fileID: 2025906072190078501}
   - component: {fileID: 6299104649726534356}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lTrack
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1538,7 +1809,7 @@ GameObject:
   - component: {fileID: 4758869638925803001}
   - component: {fileID: 4350093037624625017}
   - component: {fileID: 8263553491986546215}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_2
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1617,6 +1888,59 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &8058858997869072496
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7889239513720110081}
+  - component: {fileID: 3657154135086953911}
+  m_Layer: 13
+  m_Name: Hitbox (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7889239513720110081
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8058858997869072496}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5577670036198708245}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3657154135086953911
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8058858997869072496}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.88238144, y: 0.84348726, z: 5.802018}
+  m_Center: {x: -1.5400393, y: 0.7907852, z: 0.062037826}
 --- !u!1 &8429420435366499268
 GameObject:
   m_ObjectHideFlags: 0
@@ -1628,7 +1952,7 @@ GameObject:
   - component: {fileID: 5289583044474353294}
   - component: {fileID: 5264217394640508226}
   - component: {fileID: 6370085083691597286}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_b
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -1716,7 +2040,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1533576543445048458}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rtpoint
   m_TagString: Tank
   m_Icon: {fileID: 0}

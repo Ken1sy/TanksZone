@@ -1,109 +1,80 @@
+using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine;
+using GameScripts.Camera;
 
 namespace GameScripts.AIM
 {
-    public class WeaponController : MonoBehaviour
+    [RequireComponent(typeof(SmartAim))]
+    public abstract class WeaponController : MonoBehaviour
     {
-        [Header("State")]
+        [Header("Weapon Base State")]
         public bool isLocalPlayer = false;
+        public bool useAutoAim = true;
 
         [Header("References")]
         public LayerMask hitMask = ~0;
-        private Transform muzzlePoint;
-        private SmartAim smartAim;
-        private Rigidbody tankRigidbody;
-        private UnityEngine.Camera mainCamera;
+        protected Transform muzzlePoint;
+        protected SmartAim smartAim;
+        protected Rigidbody tankRigidbody;
+        protected UnityEngine.Camera mainCamera;
 
-        [Header("Shooting Stats")]
+        [HideInInspector]
+        public PlayerTankBrain tankBrain;
+
+        [Header("Base Shooting Stats")]
         public float damage = 50f;
         public float range = 1000f;
         public float impactForce = 7000f;
-        public float recoilForce = 3000f;
+        public float recoilForce = 10500f;
 
-        [Header("Visual Effects")]
-        public GameObject hitEffectPrefab;
-        public GameObject muzzleFlashPrefab;
-        public GameObject decalPrefab;
-
-        private void Start()
+        public virtual void Initialize(PlayerTankBrain brain)
         {
+            tankBrain = brain;
             smartAim = GetComponent<SmartAim>();
             tankRigidbody = GetComponentInParent<Rigidbody>();
-            mainCamera = UnityEngine.Camera.main;
+
+            if (tankBrain != null && tankBrain.camController != null)
+            {
+                mainCamera = tankBrain.camController.GetComponentInChildren<UnityEngine.Camera>();
+            }
         }
 
         public void SetMuzzlePoint(Transform muzzle) { muzzlePoint = muzzle; }
 
-        private void Update() { if (isLocalPlayer) UpdateCrosshairPosition(); }
-
-        private void UpdateCrosshairPosition()
+        protected void ApplyRecoil()
         {
-            if (muzzlePoint == null || CrosshairUI.Instance == null || mainCamera == null) return;
-            bool isCursorFree = Cursor.visible || Cursor.lockState == CursorLockMode.None;
-            if (isCursorFree) { CrosshairUI.Instance.UpdateCrosshair(Vector3.zero, false, true); return; }
-            Vector3 aimDirection = smartAim.GetAimDirection(transform, muzzlePoint, out bool isBlocked).normalized;
-            Vector3 targetPoint;
-            if (Physics.Raycast(muzzlePoint.position, aimDirection, out RaycastHit hit, range, hitMask)) targetPoint = hit.point;
-            else targetPoint = muzzlePoint.position + aimDirection * range;
-            Vector3 screenPos = mainCamera.WorldToScreenPoint(targetPoint);
-            CrosshairUI.Instance.UpdateCrosshair(screenPos, isBlocked, false);
-        }
+            if (tankRigidbody == null || muzzlePoint == null) return;
 
-        public void TryShootLocal(out Vector3 aimDirection, out bool isBlocked, out NetworkObject hitNetObj, out Vector3 hitPoint)
-        {
-            aimDirection = Vector3.forward;
-            isBlocked = false;
-            hitNetObj = null;
-            hitPoint = Vector3.zero;
-            if (muzzlePoint == null) return;
-            aimDirection = smartAim.GetAimDirection(transform, muzzlePoint, out isBlocked).normalized;
-            ExecuteVisualShot(aimDirection, isBlocked, out hitNetObj, out hitPoint);
+            Vector3 recoilDirection = -muzzlePoint.forward;
+            Vector3 flatRecoil = new Vector3(recoilDirection.x, recoilDirection.y * 0.4f, recoilDirection.z).normalized;
+            Vector3 pushPoint = Vector3.Lerp(tankRigidbody.worldCenterOfMass, muzzlePoint.position, 0.3f);
+
+            tankRigidbody.AddForceAtPosition(flatRecoil * recoilForce, pushPoint, ForceMode.Impulse);
+
             if (mainCamera != null)
             {
-                GameScripts.Camera.CameraController camCtrl = mainCamera.GetComponentInParent<GameScripts.Camera.CameraController>();
+                CameraController camCtrl = mainCamera.GetComponentInParent<CameraController>();
                 if (camCtrl != null) camCtrl.ApplyCameraRecoil(1f);
             }
         }
 
-        public void PerformRemoteShoot(Vector3 aimDirection, bool isBlocked)
-        {
-            NetworkObject dummyObj; Vector3 dummyPos;
-            ExecuteVisualShot(aimDirection, isBlocked, out dummyObj, out dummyPos);
-        }
+        public abstract void ProcessInput(bool isShootingHeld);
+        public abstract void PerformRemoteVisualShot(Vector3 aimDirection, bool isBlocked);
 
-        private void ExecuteVisualShot(Vector3 aimDirection, bool isBlocked, out NetworkObject hitNetObj, out Vector3 hitPoint)
+        public virtual void PerformServerPhysics(Vector3 aimDirection, bool isBlocked, NetworkObject hitNetObj, Vector3 hitPoint)
         {
-            hitNetObj = null; hitPoint = Vector3.zero;
-            ShowMuzzleFlash();
-            if (isBlocked)
+            if (isBlocked || hitNetObj == null) return;
+
+            PlayerTankBrain targetBrain = hitNetObj.GetComponent<PlayerTankBrain>();
+            if (targetBrain != null)
             {
-                Vector3 impactPos = muzzlePoint.position;
-                Vector3 impactNormal = -muzzlePoint.forward;
-                Transform targetTransform = null;
-                if (Physics.Linecast(transform.position, muzzlePoint.position, out RaycastHit blockHit, hitMask))
-                {
-                    impactPos = blockHit.point + blockHit.normal * 0.02f;
-                    impactNormal = blockHit.normal;
-                    targetTransform = blockHit.collider.transform;
-                }
-                SpawnHitVisuals(impactPos, impactNormal, targetTransform);
-                return;
-            }
-            if (Physics.Raycast(muzzlePoint.position, aimDirection, out RaycastHit hit, range, hitMask))
-            {
-                hitPoint = hit.point;
-                hitNetObj = hit.collider.GetComponentInParent<NetworkObject>();
-                SpawnHitVisuals(hit.point, hit.normal, hit.collider.transform);
-            }
-        }
+                targetBrain.TargetApplyImpact(targetBrain.Owner, aimDirection, impactForce, hitPoint);
 
-        public void PerformServerPhysics(Vector3 aimDirection, bool isBlocked, NetworkObject hitNetObj, Vector3 hitPoint)
-        {
-            ApplyRecoil();
-
-            if (isBlocked) return;
-            if (hitNetObj != null)
+                // ИСПРАВЛЕНИЕ: Передаем СВОЙ tankBrain, чтобы сервер знал, кто нанес урон
+                targetBrain.TakeDamage(damage, tankBrain);
+            }
+            else
             {
                 Rigidbody targetRb = hitNetObj.GetComponent<Rigidbody>();
                 if (targetRb != null && targetRb != tankRigidbody)
@@ -113,32 +84,44 @@ namespace GameScripts.AIM
             }
         }
 
-        private void SpawnHitVisuals(Vector3 pos, Vector3 normal, Transform parent)
+        protected virtual void LateUpdate()
         {
-            if (hitEffectPrefab != null)
-                Instantiate(hitEffectPrefab, pos, Quaternion.LookRotation(normal));
+            if (!isLocalPlayer || muzzlePoint == null || mainCamera == null) return;
 
-            if (decalPrefab != null && parent != null)
+            Vector3 aimDirection = muzzlePoint.forward;
+            bool isBlocked = false;
+
+            if (smartAim != null)
             {
-                Vector3 safePosition = pos + normal * 0.02f;
-                GameObject decal = Instantiate(decalPrefab, safePosition, Quaternion.LookRotation(-normal));
-                decal.transform.SetParent(parent);
-                decal.transform.Rotate(0, 0, Random.Range(0f, 360f), Space.Self);
-                Destroy(decal, 10f);
+                Vector3 smartDir = smartAim.GetAimDirection(transform, muzzlePoint, out isBlocked);
+                if (useAutoAim) aimDirection = smartDir;
+            }
+
+            Vector3 worldHitPoint = muzzlePoint.position + aimDirection * range;
+            RaycastHit[] hits = Physics.RaycastAll(muzzlePoint.position, aimDirection, range, hitMask);
+            float closestDist = float.MaxValue;
+
+            foreach (var hit in hits)
+            {
+                if (hit.collider.transform.root != transform.root)
+                {
+                    if (hit.distance < closestDist)
+                    {
+                        closestDist = hit.distance;
+                        worldHitPoint = hit.point;
+                    }
+                }
+            }
+
+            Vector3 screenPos = mainCamera.WorldToScreenPoint(worldHitPoint);
+            bool isCursorFree = (Cursor.lockState == CursorLockMode.None);
+
+            if (CrosshairUI.Instance != null)
+            {
+                CrosshairUI.Instance.UpdateCrosshair(screenPos, isBlocked, isCursorFree);
             }
         }
 
-        private void ShowMuzzleFlash()
-        {
-            if (muzzleFlashPrefab != null && muzzlePoint != null)
-                Instantiate(muzzleFlashPrefab, muzzlePoint.position, muzzlePoint.rotation, muzzlePoint);
-        }
-
-        private void ApplyRecoil()
-        {
-            if (tankRigidbody == null || muzzlePoint == null) return;
-            Vector3 recoilDirection = -muzzlePoint.forward;
-            tankRigidbody.AddForceAtPosition(recoilDirection * recoilForce, muzzlePoint.position, ForceMode.Impulse);
-        }
+        public virtual float GetReloadProgress() { return 1f; }
     }
 }

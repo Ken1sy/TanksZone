@@ -1,5 +1,58 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &880622922699283810
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8753681032004578874}
+  - component: {fileID: 6558742188620219914}
+  m_Layer: 13
+  m_Name: Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8753681032004578874
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880622922699283810}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6601466317270141743}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6558742188620219914
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880622922699283810}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.4079404, y: 0.78522474, z: 1.6645688}
+  m_Center: {x: 0, y: 0.396668, z: 0.055668652}
 --- !u!1 &2065649408836821472
 GameObject:
   m_ObjectHideFlags: 0
@@ -9,7 +62,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8368122940012719981}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,9 +95,9 @@ GameObject:
   - component: {fileID: 6601466317270141743}
   - component: {fileID: 7129593442901405555}
   - component: {fileID: 9100869349522651681}
-  - component: {fileID: -6591693139212742193}
   - component: {fileID: -4360889524003928640}
-  m_Layer: 0
+  - component: {fileID: 7413943657420062498}
+  m_Layer: 12
   m_Name: Thunder_Standart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -66,6 +119,9 @@ Transform:
   m_Children:
   - {fileID: 8368122940012719981}
   - {fileID: 5791292876440876486}
+  - {fileID: 8753681032004578874}
+  - {fileID: 5819066492762586388}
+  - {fileID: 8433162090486628759}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7129593442901405555
@@ -125,29 +181,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-6591693139212742193
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2877250269478108502}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2649e339fe70444cac52391bd254e3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponController
-  isLocalPlayer: 0
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 2048
-  damage: 50
-  range: 1000
-  impactForce: 10000
-  recoilForce: 7000
-  hitEffectPrefab: {fileID: 1121192042590650, guid: 756a9bbba4581ae4dbfb8d1b965c9e57, type: 3}
-  muzzleFlashPrefab: {fileID: 4392389710284111089, guid: 89092ae31b9aba54dbda9415642d0d4a, type: 3}
-  decalPrefab: {fileID: 4075624906338656142, guid: c648d22c74907b040846fd9096ec1983, type: 3}
 --- !u!114 &-4360889524003928640
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,7 +203,33 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 2048
+  maxBounces: 0
   muzzleClearanceRadius: 0.15
+--- !u!114 &7413943657420062498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2877250269478108502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaf2f4252f109464f94d220c3d4dcf62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameScripts.AIM.StandardGun
+  isLocalPlayer: 0
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 10240
+  tankBrain: {fileID: 0}
+  damage: 582.35
+  range: 1000
+  impactForce: 5000
+  recoilForce: 6000
+  reloadTime: 2.7
+  hitEffectPrefab: {fileID: 1121192042590650, guid: 756a9bbba4581ae4dbfb8d1b965c9e57, type: 3}
+  muzzleFlashPrefab: {fileID: 4392389710284111089, guid: 89092ae31b9aba54dbda9415642d0d4a, type: 3}
+  decalPrefab: {fileID: 4075624906338656142, guid: c648d22c74907b040846fd9096ec1983, type: 3}
 --- !u!1 &4134924400696519428
 GameObject:
   m_ObjectHideFlags: 0
@@ -180,7 +239,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5791292876440876486}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: flgst
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -202,3 +261,109 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6601466317270141743}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4534983697689298915
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5819066492762586388}
+  - component: {fileID: 4371490873746142688}
+  m_Layer: 13
+  m_Name: Hitbox (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5819066492762586388
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4534983697689298915}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6601466317270141743}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &4371490873746142688
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4534983697689298915}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.6025188, y: 0.73645043, z: 2.8886652}
+  m_Center: {x: 0, y: 0.524793, z: 2.3394322}
+--- !u!1 &7776983705977617467
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8433162090486628759}
+  - component: {fileID: 1187112280001504324}
+  m_Layer: 13
+  m_Name: Hitbox (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8433162090486628759
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7776983705977617467}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6601466317270141743}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1187112280001504324
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7776983705977617467}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.115616, y: 0.41286448, z: 1.3905168}
+  m_Center: {x: 0, y: 0.6124304, z: -1.4698856}

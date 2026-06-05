@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6276127254956267257}
   - component: {fileID: 4363332280105980731}
   - component: {fileID: 2809400423578539695}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lTrack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 6074432201639095482}
   - component: {fileID: 8854939324434374836}
   - component: {fileID: 6723330316804171746}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -198,6 +198,112 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &587219876744818192
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1063167017911931353}
+  - component: {fileID: 3339540776831523217}
+  m_Layer: 13
+  m_Name: Hitbox (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1063167017911931353
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 587219876744818192}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2707583118382634267}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3339540776831523217
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 587219876744818192}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0037732, y: 1.0639709, z: 6.3012705}
+  m_Center: {x: 1.737161, y: 0.92636687, z: 0.10318899}
+--- !u!1 &809908320645022866
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5648292537635611640}
+  - component: {fileID: 8387006269726564686}
+  m_Layer: 13
+  m_Name: Hitbox (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5648292537635611640
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 809908320645022866}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2707583118382634267}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &8387006269726564686
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 809908320645022866}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.440156, y: 1.0406648, z: 1.3529024}
+  m_Center: {x: 0, y: 0.91471344, z: 1.791086}
 --- !u!1 &1942485497224263972
 GameObject:
   m_ObjectHideFlags: 0
@@ -209,7 +315,7 @@ GameObject:
   - component: {fileID: 3237219548788004891}
   - component: {fileID: 283886519980619594}
   - component: {fileID: 6953589579461490090}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -300,7 +406,7 @@ GameObject:
   - component: {fileID: 320990103009200033}
   - component: {fileID: 6745632675098193194}
   - component: {fileID: 2869951365382136123}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rTrack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -407,7 +513,7 @@ GameObject:
   - component: {fileID: 3148446363365718062}
   - component: {fileID: 4734583254177044776}
   - component: {fileID: 2814764858146740413}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -497,7 +603,7 @@ GameObject:
   - component: {fileID: 8914117420927695843}
   - component: {fileID: 8136294272608861699}
   - component: {fileID: 2555088009006875567}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -587,7 +693,7 @@ GameObject:
   - component: {fileID: 1261668661047144333}
   - component: {fileID: 557163378360975438}
   - component: {fileID: 204541539414406114}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -679,7 +785,7 @@ GameObject:
   - component: {fileID: 8570469686686621005}
   - component: {fileID: 3658500330741942068}
   - component: {fileID: 4385613450696258796}
-  m_Layer: 13
+  m_Layer: 12
   m_Name: Dictator_Standart
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -714,6 +820,11 @@ Transform:
   - {fileID: 6074432201639095482}
   - {fileID: 7518644142347073756}
   - {fileID: 6347316506067216364}
+  - {fileID: 7841647561436314304}
+  - {fileID: 7418309386749661327}
+  - {fileID: 5648292537635611640}
+  - {fileID: 2542900723525291226}
+  - {fileID: 1063167017911931353}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5947220419780580926
@@ -826,7 +937,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1370183088218366036}
   - component: {fileID: 9038057465534249915}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: mount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -875,7 +986,7 @@ GameObject:
   - component: {fileID: 9112105909995966805}
   - component: {fileID: 8260474011570908483}
   - component: {fileID: 6559683741365537046}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -965,7 +1076,7 @@ GameObject:
   - component: {fileID: 7158166438295332918}
   - component: {fileID: 1462711575295800168}
   - component: {fileID: 6524261905533693981}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1055,7 +1166,7 @@ GameObject:
   - component: {fileID: 7518644142347073756}
   - component: {fileID: 1733865722470331907}
   - component: {fileID: 8694923715442354460}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1145,7 +1256,7 @@ GameObject:
   - component: {fileID: 646790309572001486}
   - component: {fileID: 8885380821638596027}
   - component: {fileID: 651749955945297536}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_f
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1235,7 +1346,7 @@ GameObject:
   - component: {fileID: 6347316506067216364}
   - component: {fileID: 1662559640208484484}
   - component: {fileID: 5579191676997085251}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_f
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1323,7 +1434,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5156470199644090450}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: ltpoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1354,7 +1465,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7531831446873122249}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rtpoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1376,6 +1487,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5565145989428233529}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6676250542614846517
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7841647561436314304}
+  - component: {fileID: 9087905604412511866}
+  m_Layer: 13
+  m_Name: Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7841647561436314304
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6676250542614846517}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2707583118382634267}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &9087905604412511866
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6676250542614846517}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.440156, y: 2.0185502, z: 3.3773363}
+  m_Center: {x: 0, y: 1.4036559, z: -1.9177653}
 --- !u!1 &6769378604904930208
 GameObject:
   m_ObjectHideFlags: 0
@@ -1387,7 +1551,7 @@ GameObject:
   - component: {fileID: 7384794856027170740}
   - component: {fileID: 4958299053621188698}
   - component: {fileID: 1421817385576220325}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1466,6 +1630,112 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &8273946150012610796
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7418309386749661327}
+  - component: {fileID: 3651917695743842426}
+  m_Layer: 13
+  m_Name: Hitbox (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7418309386749661327
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8273946150012610796}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2707583118382634267}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3651917695743842426
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8273946150012610796}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.440156, y: 1.5857158, z: 1.0907304}
+  m_Center: {x: 0, y: 1.1872387, z: 0.29843545}
+--- !u!1 &8480417934960153376
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2542900723525291226}
+  - component: {fileID: 4787410390717380831}
+  m_Layer: 13
+  m_Name: Hitbox (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2542900723525291226
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8480417934960153376}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2707583118382634267}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &4787410390717380831
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8480417934960153376}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0037732, y: 1.0639709, z: 6.3012705}
+  m_Center: {x: -1.7371609, y: 0.92636687, z: 0.10318899}
 --- !u!1 &8851079117308181688
 GameObject:
   m_ObjectHideFlags: 0
@@ -1477,7 +1747,7 @@ GameObject:
   - component: {fileID: 760917074358891346}
   - component: {fileID: 6951813905991581857}
   - component: {fileID: 4274167802539911843}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}

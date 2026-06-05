@@ -11,12 +11,13 @@ GameObject:
   - component: {fileID: 6840914817475506340}
   - component: {fileID: 8315083278500779605}
   - component: {fileID: 7270305722493885664}
-  - component: {fileID: 3955041303261331307}
   - component: {fileID: 2219365247525601290}
   - component: {fileID: 4204225032853754019}
   - component: {fileID: 1125558035917653240}
   - component: {fileID: 78541182623549635}
   - component: {fileID: 7182006395077383882}
+  - component: {fileID: 3508643515566917736}
+  - component: {fileID: 8784217481899058508}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -78,21 +79,6 @@ MonoBehaviour:
   _maximumLevelOfDetailInterval: 2
   _levelOfDetailUpdateDuration: 1
   _levelOfDetailDistances: []
---- !u!114 &3955041303261331307
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1129217445615170244}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 211a9f6ec51ddc14f908f5acc0cd0423, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playerPrefab: {fileID: 3262990353992197911, guid: 4735a6fc03559b74b8f17f2808740619, type: 3}
-  _addToDefaultScene: 1
-  Spawns: []
 --- !u!114 &2219365247525601290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,8 +113,8 @@ MonoBehaviour:
   _stopSocketsOnThread: 0
   _dontRoute: 0
   _reuseAddress: 0
-  _ipv4BindAddress: 
-  _enableIpv6: 1
+  _ipv4BindAddress: 127.0.0.1
+  _enableIpv6: 0
   _ipv6BindAddress: 
   _port: 7770
   _maximumClients: 4095
@@ -191,3 +177,31 @@ MonoBehaviour:
   _lightProbeUpdating: 0
   _moveClientObjects: 1
   _setActiveScene: 1
+--- !u!114 &3508643515566917736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1129217445615170244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7223d79a59a121149999179171ceca46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AutoNetworkStarter
+  startHostInEditor: 1
+  offlineScenes:
+  - 00_Bootstrap
+  - 01_Auth
+--- !u!114 &8784217481899058508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1129217445615170244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29e42ad3f2d108c448eaed746edcf38c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameScripts.Network.NetworkConfigLoader

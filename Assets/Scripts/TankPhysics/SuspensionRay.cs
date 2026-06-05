@@ -17,8 +17,11 @@ public class SuspensionRay
         Vector3 worldOrigin = rb.transform.TransformPoint(localOrigin);
         Vector3 worldDir = rb.transform.TransformDirection(direction);
 
-        // 1. Стреляем лучом
-        if (Physics.Raycast(worldOrigin, worldDir, out hit, maxLen, layerMask, QueryTriggerInteraction.Ignore))
+        // НОВОЕ: Получаем локальную сцену физики (изолированную комнату)
+        PhysicsScene roomPhysics = rb.gameObject.scene.GetPhysicsScene();
+
+        // ИСПРАВЛЕНИЕ: Стреляем лучом именно в локальной физической сцене (roomPhysics), а не в глобальной (Physics)
+        if (roomPhysics.Raycast(worldOrigin, worldDir, out hit, maxLen, layerMask, QueryTriggerInteraction.Ignore))
         {
             // Дополнительная проверка: если луч попал в коллайдер самого танка (на всякий случай)
             if (hit.collider.transform.root == rb.transform.root)
@@ -37,7 +40,7 @@ public class SuspensionRay
             }
 
             hasCollision = true;
-            
+
             // Расчет сжатия (0 = нет сжатия, maxLen = полное сжатие)
             float compression = maxLen - hit.distance;
 

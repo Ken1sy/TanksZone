@@ -177,6 +177,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NetworkManager
       objectReference: {fileID: 0}
+    - target: {fileID: 3508643515566917736, guid: 82725c38a04c5e643be71cf108bab465, type: 3}
+      propertyPath: startHostInEditor
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6840914817475506340, guid: 82725c38a04c5e643be71cf108bab465, type: 3}
       propertyPath: m_LocalPosition.x
       value: 561

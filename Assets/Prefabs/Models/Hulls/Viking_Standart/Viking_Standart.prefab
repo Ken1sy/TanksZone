@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7368342410601416977}
   - component: {fileID: 2406435855265223007}
   - component: {fileID: -1030194469433921845}
-  m_Layer: 13
+  m_Layer: 12
   m_Name: Viking_Standart
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -50,6 +50,9 @@ Transform:
   - {fileID: 6453896746475276227}
   - {fileID: 7243162135884389148}
   - {fileID: 7405163558923603979}
+  - {fileID: 8389734193555693819}
+  - {fileID: 1521398202219549606}
+  - {fileID: 4858747732519117117}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7249089526719973645
@@ -163,7 +166,7 @@ GameObject:
   - component: {fileID: 5641670843749520243}
   - component: {fileID: 55275317517197787}
   - component: {fileID: 6252344962401623805}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -253,7 +256,7 @@ GameObject:
   - component: {fileID: 8860369704896172205}
   - component: {fileID: 604918809034324982}
   - component: {fileID: 7067680286599702609}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -343,7 +346,7 @@ GameObject:
   - component: {fileID: 4430188488096610999}
   - component: {fileID: 7675899921995907377}
   - component: {fileID: 1340854000783014714}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_f
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -422,6 +425,59 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1401038679999084945
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4858747732519117117}
+  - component: {fileID: 8253570106058431609}
+  m_Layer: 13
+  m_Name: Hitbox (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4858747732519117117
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401038679999084945}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4803555448984653341}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &8253570106058431609
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401038679999084945}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9493613, y: 0.9396659, z: 5.734947}
+  m_Center: {x: 1.586254, y: 0.8742613, z: -0.3458104}
 --- !u!1 &1429661910316137061
 GameObject:
   m_ObjectHideFlags: 0
@@ -433,7 +489,7 @@ GameObject:
   - component: {fileID: 8397174322700809566}
   - component: {fileID: 5156090914757478488}
   - component: {fileID: 6416274942949001322}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -523,7 +579,7 @@ GameObject:
   - component: {fileID: 5883737004714943075}
   - component: {fileID: 2333550439392325980}
   - component: {fileID: 2701563169352369749}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -613,7 +669,7 @@ GameObject:
   - component: {fileID: 6453896746475276227}
   - component: {fileID: 1325586481628507113}
   - component: {fileID: 7173771779203240833}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -703,7 +759,7 @@ GameObject:
   - component: {fileID: 7248096149153965951}
   - component: {fileID: 8803850966578314690}
   - component: {fileID: 8784507692646059625}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -782,6 +838,59 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2633770951419295651
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1521398202219549606}
+  - component: {fileID: 7039916188993164803}
+  m_Layer: 13
+  m_Name: Hitbox (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1521398202219549606
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2633770951419295651}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4803555448984653341}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &7039916188993164803
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2633770951419295651}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9493613, y: 0.9396659, z: 5.734947}
+  m_Center: {x: -1.5862544, y: 0.8742613, z: -0.3458104}
 --- !u!1 &2641843970488670080
 GameObject:
   m_ObjectHideFlags: 0
@@ -793,7 +902,7 @@ GameObject:
   - component: {fileID: 6827626935407168358}
   - component: {fileID: 1597989465846540193}
   - component: {fileID: 4095986228272054210}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_b
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -884,7 +993,7 @@ GameObject:
   - component: {fileID: 1927616218101519837}
   - component: {fileID: 3546881869245122168}
   - component: {fileID: 8789023697706187139}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lTrack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -991,7 +1100,7 @@ GameObject:
   - component: {fileID: 5634572015297166184}
   - component: {fileID: 8563894715808807973}
   - component: {fileID: 281426433601341302}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1081,7 +1190,7 @@ GameObject:
   - component: {fileID: 5537706064430289959}
   - component: {fileID: 8630271289450127991}
   - component: {fileID: 4117930544843356908}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1170,7 +1279,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8310111506259385305}
   - component: {fileID: 5607602546014170722}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: mount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1217,7 +1326,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8349345073425853141}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: ltpoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1250,7 +1359,7 @@ GameObject:
   - component: {fileID: 866362052124246659}
   - component: {fileID: 2153248736986696999}
   - component: {fileID: 4791133800280669848}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: lwheel_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1340,7 +1449,7 @@ GameObject:
   - component: {fileID: 7463458474694555440}
   - component: {fileID: 5545475946251436264}
   - component: {fileID: 1521643581402900194}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1431,7 +1540,7 @@ GameObject:
   - component: {fileID: 7782187209876056960}
   - component: {fileID: 3035223789706254830}
   - component: {fileID: 3738851597330912373}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rTrack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1527,6 +1636,59 @@ MonoBehaviour:
   materialIndex: 0
   texturePropertyName: _BaseMap
   scrollAxis: {x: -0.65, y: 0}
+--- !u!1 &8127385454485036921
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8389734193555693819}
+  - component: {fileID: 1865789045637091908}
+  m_Layer: 13
+  m_Name: Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8389734193555693819
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8127385454485036921}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4803555448984653341}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1865789045637091908
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8127385454485036921}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.2236378, y: 1.1330043, z: 5.734947}
+  m_Center: {x: 0, y: 0.9709305, z: -0.34581053}
 --- !u!1 &8707818647279113076
 GameObject:
   m_ObjectHideFlags: 0
@@ -1536,7 +1698,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2147213858778294192}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rtpoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1569,7 +1731,7 @@ GameObject:
   - component: {fileID: 7405163558923603979}
   - component: {fileID: 8021994926092800008}
   - component: {fileID: 4816241083449616038}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_f
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1659,7 +1821,7 @@ GameObject:
   - component: {fileID: 7243162135884389148}
   - component: {fileID: 5093016952613670298}
   - component: {fileID: 8421540741075721491}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rwheel_b
   m_TagString: Untagged
   m_Icon: {fileID: 0}

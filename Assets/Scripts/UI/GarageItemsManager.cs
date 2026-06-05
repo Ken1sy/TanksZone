@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
-using PlayFab; // НОВОЕ: Подключаем PlayFab
-using PlayFab.ClientModels; // НОВОЕ: Подключаем модели данных PlayFab
+using PlayFab;
+using PlayFab.ClientModels;
 
 public enum ItemCategory
 {
@@ -45,7 +45,7 @@ public class GarageItemsManager : MonoBehaviour
 {
     [Header("СТАРТОВЫЙ НАБОР (Для новых игроков)")]
     public string defaultTurretID = "turret_smoky";
-    public string defaultHullID = "hull_hunter";
+    public string defaultHullID = "hull_viking";
     public string defaultPaintID = "paint_green";
 
     [Header("Настройки UI (Список)")]
@@ -81,17 +81,17 @@ public class GarageItemsManager : MonoBehaviour
 
     private ItemCategory currentCategory = ItemCategory.Turret;
 
+    // Таблица опыта для вычисления ранга прямо в гараже
+    private readonly int[] rankXpThresholds = {
+        0, 100, 500, 1500, 3700, 7100, 12300, 20000, 29000, 41000,
+        57000, 76000, 98000, 125000, 156000, 192000, 233000, 280000,
+        332000, 390000, 455000, 527000, 606000, 692000, 787000, 889000,
+        1000000, 1122000, 1255000, 1400000, 1600000
+    };
+
     private void Start()
     {
-        currentPlayerRankIndex = 0; // Временно "Ефрейтор"
-
-        // 1. Устанавливаем дефолтный (стартовый) танк, пока данные грузятся с сервера
-        ApplyDefaultItemsLocally();
-        UpdateEquippedCache();
-        PopulateGarage(false);
-        RebuildTankPreview(null);
-
-        // 2. АСИНХРОННО запрашиваем реальный инвентарь из облака PlayFab!
+        currentPlayerRankIndex = 0;
         LoadInventoryFromPlayFab();
     }
 
@@ -101,7 +101,6 @@ public class GarageItemsManager : MonoBehaviour
 
     private void ApplyDefaultItemsLocally()
     {
-        // Временно снимаем всё и надеваем только стартовый набор
         foreach (var item in itemsDatabase)
         {
             if (item.itemID == defaultTurretID || item.itemID == defaultHullID || item.itemID == defaultPaintID)
@@ -124,14 +123,31 @@ public class GarageItemsManager : MonoBehaviour
             {
                 if (result.Data == null) return;
 
-                // 1. Получаем ID надетых предметов (или берем стандартные, если пусто)
+                if (result.Data.ContainsKey("XP"))
+                {
+                    int currentXp = int.Parse(result.Data["XP"].Value);
+                    currentPlayerRankIndex = 0;
+
+                    for (int i = rankXpThresholds.Length - 1; i >= 0; i--)
+                    {
+                        if (currentXp >= rankXpThresholds[i])
+                        {
+                            currentPlayerRankIndex = i;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    currentPlayerRankIndex = 0;
+                }
+
                 string savedTurret = result.Data.ContainsKey("Equipped_Turret") ? result.Data["Equipped_Turret"].Value : defaultTurretID;
                 string savedHull = result.Data.ContainsKey("Equipped_Hull") ? result.Data["Equipped_Hull"].Value : defaultHullID;
                 string savedPaint = result.Data.ContainsKey("Equipped_Paint") ? result.Data["Equipped_Paint"].Value : defaultPaintID;
 
                 foreach (var item in itemsDatabase)
                 {
-                    // 2. Проверяем покупки (если ключа "Owned_..." нет, значит предмет не куплен)
                     if (item.itemID == defaultTurretID || item.itemID == defaultHullID || item.itemID == defaultPaintID)
                     {
                         item.isOwned = true;
@@ -141,22 +157,28 @@ public class GarageItemsManager : MonoBehaviour
                         item.isOwned = result.Data.ContainsKey("Owned_" + item.itemID);
                     }
 
-                    // 3. Проверяем экипировку
                     if (item.category == ItemCategory.Turret) item.isEquipped = (item.itemID == savedTurret);
                     else if (item.category == ItemCategory.Hull) item.isEquipped = (item.itemID == savedHull);
                     else if (item.category == ItemCategory.Paint) item.isEquipped = (item.itemID == savedPaint);
                 }
 
-                // 4. Обновляем гараж реальными данными с сервера
+                selectedCard = null;
+                selectedItemData = null;
+
                 UpdateEquippedCache();
                 PopulateGarage(false);
                 RebuildTankPreview(null);
 
-                Debug.Log("Инвентарь успешно загружен из облака PlayFab!");
+                Debug.Log($"Инвентарь и ранг ({currentPlayerRankIndex}) успешно загружены из облака PlayFab!");
             },
             error =>
             {
                 Debug.LogError("Ошибка загрузки инвентаря с сервера: " + error.ErrorMessage);
+
+                ApplyDefaultItemsLocally();
+                UpdateEquippedCache();
+                PopulateGarage(false);
+                RebuildTankPreview(null);
             });
     }
 
@@ -198,16 +220,57 @@ public class GarageItemsManager : MonoBehaviour
         {
             if (item.isEquipped)
             {
-                if (item.category == ItemCategory.Hull) equippedHullPrefab = item.item3DModel;
-                else if (item.category == ItemCategory.Turret) equippedTurretPrefab = item.item3DModel;
-                else if (item.category == ItemCategory.Paint) equippedSkinId = item.paintSkinId;
+                // ИСПРАВЛЕНИЕ: Теперь мы записываем надетые вещи в глобальные переменные для переноса в бой
+                if (item.category == ItemCategory.Hull)
+                {
+                    equippedHullPrefab = item.item3DModel;
+                    TankSetupData.SelectedHullID = item.itemID;
+                }
+                else if (item.category == ItemCategory.Turret)
+                {
+                    equippedTurretPrefab = item.item3DModel;
+                    TankSetupData.SelectedTurretID = item.itemID;
+                }
+                else if (item.category == ItemCategory.Paint)
+                {
+                    equippedSkinId = item.paintSkinId;
+                    TankSetupData.SelectedSkinID = item.paintSkinId;
+                }
             }
         }
     }
 
+
+
+    private Transform FindMountPoint(Transform parent)
+    {
+        Transform[] children = parent.GetComponentsInChildren<Transform>(true);
+        foreach (Transform t in children)
+        {
+            if (t.name.ToLower() == "mount") return t;
+        }
+        return null;
+    }
+
     private void RebuildTankPreview(GarageItemInfo previewItem)
     {
-        if (previewHull != null) Destroy(previewHull);
+        if (hullSpawnPoint == null)
+        {
+            GameObject anchor = GameObject.Find("TankAnchor");
+            if (anchor != null) hullSpawnPoint = anchor.transform;
+        }
+
+        if (previewHull != null)
+        {
+            previewHull.SetActive(false);
+            Destroy(previewHull);
+        }
+
+        if (hullSpawnPoint == null)
+        {
+            Debug.LogWarning("Точка спавна танка не найдена! Назовите пустой объект в Гараже 'TankAnchor'.");
+            return;
+        }
 
         GameObject hullToSpawn = equippedHullPrefab;
         GameObject turretToSpawn = equippedTurretPrefab;
@@ -226,7 +289,7 @@ public class GarageItemsManager : MonoBehaviour
             previewHull.transform.localPosition = new Vector3(0f, tankYOffset, 0f);
             previewHull.transform.localRotation = Quaternion.identity;
 
-            Transform mount = previewHull.transform.Find("mount");
+            Transform mount = FindMountPoint(previewHull.transform);
 
             if (mount != null && turretToSpawn != null)
             {
@@ -250,34 +313,60 @@ public class GarageItemsManager : MonoBehaviour
 
         if (previewHull != null)
         {
-            Renderer hullRend = previewHull.GetComponent<Renderer>();
-            if (hullRend != null)
+            foreach (Renderer r in previewHull.GetComponentsInChildren<Renderer>(true))
             {
-                float hullSize = Mathf.Max(hullRend.bounds.size.x, hullRend.bounds.size.z);
-                Vector2 tiling = new Vector2(config.baseTiling * hullSize, config.baseTiling * hullSize);
-                UpdateMaterial(hullRend.material, config, tiling);
+                ApplyToRenderer(r, config);
             }
         }
 
         if (previewTurret != null)
         {
-            Renderer turretRend = previewTurret.GetComponent<Renderer>();
-            if (turretRend != null)
+            foreach (Renderer r in previewTurret.GetComponentsInChildren<Renderer>(true))
             {
-                float turretSize = Mathf.Max(turretRend.bounds.size.x, turretRend.bounds.size.z);
-                Vector2 tiling = new Vector2(config.baseTiling * turretSize, config.baseTiling * turretSize);
-                UpdateMaterial(turretRend.material, config, tiling);
+                ApplyToRenderer(r, config);
             }
+        }
+    }
+
+    private void ApplyToRenderer(Renderer rend, TankSkinConfig config)
+    {
+        if (rend == null) return;
+        if (rend is ParticleSystemRenderer) return;
+
+        float size = 5f;
+        if (rend is MeshRenderer && rend.GetComponent<MeshFilter>() != null && rend.GetComponent<MeshFilter>().sharedMesh != null)
+        {
+            Vector3 boundsSize = rend.GetComponent<MeshFilter>().sharedMesh.bounds.size;
+            size = Mathf.Max(boundsSize.x, boundsSize.z);
+        }
+        else if (rend is SkinnedMeshRenderer smr && smr.sharedMesh != null)
+        {
+            Vector3 boundsSize = smr.sharedMesh.bounds.size;
+            size = Mathf.Max(boundsSize.x, boundsSize.z);
+        }
+        else
+        {
+            size = Mathf.Max(rend.bounds.size.x, rend.bounds.size.z);
+        }
+
+        if (size <= 0.01f) size = 5f;
+
+        Vector2 tiling = new Vector2(config.baseTiling * size, config.baseTiling * size);
+
+        foreach (Material mat in rend.materials)
+        {
+            UpdateMaterial(mat, config, tiling);
         }
     }
 
     private void UpdateMaterial(Material mat, TankSkinConfig config, Vector2 tiling)
     {
-        mat.SetTexture("_SkinTexture", config.skinTexture);
-        mat.SetVector("_SkinTiling", tiling);
-        mat.SetVector("_SkinGridSize", config.gridSize);
-        mat.SetFloat("_SkinAnimSpeed", config.animationSpeed);
-        mat.SetFloat("_SkinTotalFrames", config.totalFrames);
+        if (mat == null) return;
+        if (mat.HasProperty("_SkinTexture")) mat.SetTexture("_SkinTexture", config.skinTexture);
+        if (mat.HasProperty("_SkinTiling")) mat.SetVector("_SkinTiling", tiling);
+        if (mat.HasProperty("_SkinGridSize")) mat.SetVector("_SkinGridSize", config.gridSize);
+        if (mat.HasProperty("_SkinAnimSpeed")) mat.SetFloat("_SkinAnimSpeed", config.animationSpeed);
+        if (mat.HasProperty("_SkinTotalFrames")) mat.SetFloat("_SkinTotalFrames", config.totalFrames);
     }
 
     // ==========================================
@@ -453,7 +542,6 @@ public class GarageItemsManager : MonoBehaviour
     public void OnBuyButtonClicked()
     {
         if (selectedItemData == null || selectedItemData.isOwned) return;
-
         GarageUIManager uiManager = FindAnyObjectByType<GarageUIManager>();
 
         if (uiManager != null)
@@ -462,7 +550,6 @@ public class GarageItemsManager : MonoBehaviour
             {
                 selectedItemData.isOwned = true;
 
-                // ОБЛАКО: Сохраняем покупку прямо в PlayFab
                 var request = new UpdateUserDataRequest
                 {
                     Data = new Dictionary<string, string>
@@ -500,12 +587,8 @@ public class GarageItemsManager : MonoBehaviour
 
         selectedItemData.isEquipped = true;
 
-        // ОБЛАКО: Сохраняем экипировку
         SaveEquippedItemToCloud(selectedItemData);
-
         UpdateEquippedCache();
         PopulateGarage(true);
-        UpdateRightPanel(selectedItemData);
-        RebuildTankPreview(selectedItemData);
     }
 }

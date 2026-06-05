@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using GameScripts.UI;
 
 namespace GameScripts.Camera
 {
@@ -11,15 +12,13 @@ namespace GameScripts.Camera
 
         [Header("Movement Settings")]
         public float smoothing = 10f;
-        public float moveSpeed = 3f;
-        public float mouseSensitivity = 0.07f;
         public float minPitch = -10f;
         public float maxPitch = 60f;
 
         [Header("Zoom Settings")]
-        public float minZoom = 3f;      
-        public float maxZoom = 15f;    
-        public float zoomSpeed = 0.05f; 
+        public float minZoom = 3f;
+        public float maxZoom = 15f;
+        public float zoomSpeed = 0.05f;
         public float zoomSmoothing = 10f;
 
         [Header("Collision")]
@@ -37,11 +36,11 @@ namespace GameScripts.Camera
 
         private Transform target;
         private float _lookInputX;
-        private float _lookInputY; 
+        private float _lookInputY;
         private float _zoomInput;
 
         private float _currentYaw;
-        private float _currentPitch = 15f; 
+        private float _currentPitch = 15f;
         private float _targetZoom;
 
         private bool isCursorFree = false;
@@ -110,6 +109,7 @@ namespace GameScripts.Camera
                 _currentYaw = target.eulerAngles.y;
             }
         }
+
         private void LateUpdate()
         {
             if (target == null) return;
@@ -124,7 +124,7 @@ namespace GameScripts.Camera
 
         public void ApplyCameraRecoil(float kickForce)
         {
-            _recoilPitch -= kickForce; // Резко задираем камеру вверх
+            _recoilPitch -= kickForce;
         }
 
         private void HandleFollow()
@@ -136,15 +136,22 @@ namespace GameScripts.Camera
 
             if (!isCursorFree && !SettingsMenuController.IsOpen)
             {
-                _currentYaw += _lookInputX * mouseSensitivity;
-                _currentPitch -= _lookInputY * mouseSensitivity;
+                // ИСПРАВЛЕНИЕ: Читаем чувствительность напрямую из глобальных настроек
+                float currentSens = SettingsMenuController.MouseSensitivity;
+
+                // ИСПРАВЛЕНИЕ: Если инверсия включена - умножаем на -1, иначе на 1
+                float invertMultiplier = SettingsMenuController.InvertMouseY ? -1f : 1f;
+
+                _currentYaw += _lookInputX * currentSens;
+
+                // Применяем инверсию к вертикальной оси
+                _currentPitch -= _lookInputY * currentSens * invertMultiplier;
+
                 _currentPitch = Mathf.Clamp(_currentPitch, minPitch, maxPitch);
             }
 
-            // Плавное возвращение камеры на место после выстрела
             _recoilPitch = Mathf.Lerp(_recoilPitch, 0f, Time.deltaTime * recoilRecoverySpeed);
 
-            // Применяем отдачу к итоговому повороту
             transform.rotation = Quaternion.Euler(_currentPitch + _recoilPitch, _currentYaw, 0);
         }
 
@@ -152,15 +159,12 @@ namespace GameScripts.Camera
         {
             if (SettingsMenuController.IsOpen) return;
 
-            // Если колесико крутится, меняем целевую дистанцию
             if (Mathf.Abs(_zoomInput) > 0.01f)
             {
-                // Вычитаем, чтобы прокрутка вперед приближала (уменьшала дистанцию)
                 _targetZoom -= _zoomInput * zoomSpeed;
                 _targetZoom = Mathf.Clamp(_targetZoom, minZoom, maxZoom);
             }
 
-            // Плавно двигаем defaultPosition по локальной оси Z
             Vector3 currentLocalPos = defaultPosition.localPosition;
             float smoothedZ = Mathf.Lerp(currentLocalPos.z, -_targetZoom, zoomSmoothing * Time.deltaTime);
 
@@ -174,31 +178,22 @@ namespace GameScripts.Camera
             Vector3 direction = desiredPosition - start;
             float distance = direction.magnitude;
 
-            // Защита от ошибок, если позиции вдруг совпадут
             if (distance < 0.01f) return;
             direction.Normalize();
 
             Vector3 finalPosition = desiredPosition;
 
-            // 1. ОСНОВНОЙ КАСТ СФЕРОЙ
             if (Physics.SphereCast(start, cameraRadius, direction, out RaycastHit hit, distance, collisionLayer, QueryTriggerInteraction.Ignore))
             {
-                // ВАЖНО: Mathf.Max не дает дистанции стать отрицательной! 
-                // 0.5f - это минимальное расстояние. Камера физически не сможет приблизиться к центру танка ближе чем на полметра.
-                // Это предотвратит проваливание и баги функции LookAt.
                 float safeDistance = Mathf.Max(0.5f, hit.distance - collisionOffset);
                 finalPosition = start + direction * safeDistance;
             }
 
-            // 2. СТРАХОВОЧНЫЙ ВЫТАЛКИВАТЕЛЬ (Ground Avoidance)
-            // Если из-за сложных углов или неровного ландшафта камера всё же коснулась земли,
-            // мы берем lineHit.normal (направление от земли вверх) и выталкиваем камеру наружу.
             if (Physics.Linecast(start, finalPosition, out RaycastHit lineHit, collisionLayer, QueryTriggerInteraction.Ignore))
             {
                 finalPosition = lineHit.point + lineHit.normal * cameraRadius;
             }
 
-            // Применяем позицию и только потом поворачиваем
             cameraObject.position = finalPosition;
             cameraObject.LookAt(target);
         }

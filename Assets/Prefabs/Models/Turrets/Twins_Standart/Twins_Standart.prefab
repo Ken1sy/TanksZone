@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6872940783060261981}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: muzzle1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,6 +31,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 935107942274135865}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1614338078463314458
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8246247022527963112}
+  - component: {fileID: 6310307611109185060}
+  m_Layer: 13
+  m_Name: Hitbox (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8246247022527963112
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1614338078463314458}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 935107942274135865}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6310307611109185060
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1614338078463314458}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.51251745, y: 0.41813248, z: 2.0621378}
+  m_Center: {x: -0.757351, y: 0.41100153, z: 1.9441756}
 --- !u!1 &2581049342298946276
 GameObject:
   m_ObjectHideFlags: 0
@@ -42,7 +95,7 @@ GameObject:
   - component: {fileID: 7096433031141089436}
   - component: {fileID: 7433559785845368294}
   - component: {fileID: 3275776981196666748}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: reel_l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,7 +183,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4699826647316140011}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: flgst
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -163,7 +216,7 @@ GameObject:
   - component: {fileID: 5386333615777062097}
   - component: {fileID: 593384472034329387}
   - component: {fileID: 4941526426151853517}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: reel_r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -242,6 +295,59 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &7621932979685738609
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3047672398242681366}
+  - component: {fileID: 8989974704845210357}
+  m_Layer: 13
+  m_Name: Hitbox (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3047672398242681366
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7621932979685738609}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 935107942274135865}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &8989974704845210357
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7621932979685738609}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.51251745, y: 0.41813248, z: 2.0621378}
+  m_Center: {x: 0.75735104, y: 0.41100153, z: 1.9441756}
 --- !u!1 &7669724568244550284
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,9 +359,9 @@ GameObject:
   - component: {fileID: 935107942274135865}
   - component: {fileID: 9066633163748326143}
   - component: {fileID: 1478587587376844421}
-  - component: {fileID: -3824135242846042075}
   - component: {fileID: -8257593261732934990}
-  m_Layer: 0
+  - component: {fileID: -5472566186808387000}
+  m_Layer: 12
   m_Name: Twins_Standart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -280,6 +386,9 @@ Transform:
   - {fileID: 8123217903564139485}
   - {fileID: 7096433031141089436}
   - {fileID: 5386333615777062097}
+  - {fileID: 2513283049092991348}
+  - {fileID: 3047672398242681366}
+  - {fileID: 8246247022527963112}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &9066633163748326143
@@ -339,29 +448,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-3824135242846042075
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7669724568244550284}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2649e339fe70444cac52391bd254e3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponController
-  isLocalPlayer: 0
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 2048
-  damage: 50
-  range: 1000
-  impactForce: 10000
-  recoilForce: 7000
-  hitEffectPrefab: {fileID: 1121192042590650, guid: 756a9bbba4581ae4dbfb8d1b965c9e57, type: 3}
-  muzzleFlashPrefab: {fileID: 4392389710284111089, guid: 89092ae31b9aba54dbda9415642d0d4a, type: 3}
-  decalPrefab: {fileID: 4075624906338656142, guid: c648d22c74907b040846fd9096ec1983, type: 3}
 --- !u!114 &-8257593261732934990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -384,7 +470,88 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 2048
+  maxBounces: 0
   muzzleClearanceRadius: 0.15
+--- !u!114 &-5472566186808387000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7669724568244550284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e3fd1412a0443a4982c38546a97a384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameScripts.AIM.ProjectileGun
+  isLocalPlayer: 0
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 10240
+  tankBrain: {fileID: 0}
+  damage: 200
+  range: 1000
+  impactForce: 1000
+  recoilForce: 2000
+  projectilePrefab: {fileID: 7470643016616428750, guid: 038c9af52d6ca2e42b2956ea0acf6d07, type: 3}
+  fireRate: 0.35
+  alternateMuzzles:
+  - {fileID: 6872940783060261981}
+  - {fileID: 8123217903564139485}
+  muzzleFlashPrefab: {fileID: 0}
+--- !u!1 &9018199259350813284
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2513283049092991348}
+  - component: {fileID: 4465762490942872739}
+  m_Layer: 13
+  m_Name: Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2513283049092991348
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9018199259350813284}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 935107942274135865}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &4465762490942872739
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9018199259350813284}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.8030427, y: 1.0092359, z: 2.5424092}
+  m_Center: {x: 0, y: 0.50336146, z: -0.35558543}
 --- !u!1 &9213852655294118956
 GameObject:
   m_ObjectHideFlags: 0
@@ -394,7 +561,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8123217903564139485}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: muzzle2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

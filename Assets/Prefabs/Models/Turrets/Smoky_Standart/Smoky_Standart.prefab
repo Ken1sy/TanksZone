@@ -1,5 +1,58 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1748520160848811282
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2727987670266495548}
+  - component: {fileID: 444019061047484961}
+  m_Layer: 13
+  m_Name: Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2727987670266495548
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748520160848811282}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2729948812729754599}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &444019061047484961
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748520160848811282}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5701903, y: 0.8687807, z: 2.798832}
+  m_Center: {x: 0, y: 0.4514257, z: -0.008219004}
 --- !u!1 &3578506497237324284
 GameObject:
   m_ObjectHideFlags: 0
@@ -9,7 +62,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7728065188749925255}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: flgst
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25,7 +78,7 @@ Transform:
   m_GameObject: {fileID: 3578506497237324284}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.54, y: 0.821, z: -0.821}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -40,7 +93,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9215881743766524686}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +109,7 @@ Transform:
   m_GameObject: {fileID: 4433133155889963289}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.457, z: 3.31}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -73,9 +126,9 @@ GameObject:
   - component: {fileID: 2729948812729754599}
   - component: {fileID: 1347644950353989469}
   - component: {fileID: 373663946789994680}
-  - component: {fileID: 2978886810763328534}
   - component: {fileID: 2241168251843239075}
-  m_Layer: 0
+  - component: {fileID: 7893886609592903175}
+  m_Layer: 12
   m_Name: Smoky_Standart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,6 +150,7 @@ Transform:
   m_Children:
   - {fileID: 9215881743766524686}
   - {fileID: 7728065188749925255}
+  - {fileID: 2727987670266495548}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1347644950353989469
@@ -158,29 +212,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2978886810763328534
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7766901300606038106}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2649e339fe70444cac52391bd254e3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponController
-  isLocalPlayer: 0
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 2048
-  damage: 50
-  range: 1000
-  impactForce: 5000
-  recoilForce: 3000
-  hitEffectPrefab: {fileID: 1828176872806910, guid: 161a42a00288095469793019a2588899, type: 3}
-  muzzleFlashPrefab: {fileID: 4392389710284111089, guid: 89092ae31b9aba54dbda9415642d0d4a, type: 3}
-  decalPrefab: {fileID: 4075624906338656142, guid: c648d22c74907b040846fd9096ec1983, type: 3}
 --- !u!114 &2241168251843239075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,4 +234,30 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 2048
+  maxBounces: 0
   muzzleClearanceRadius: 0.15
+--- !u!114 &7893886609592903175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7766901300606038106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaf2f4252f109464f94d220c3d4dcf62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameScripts.AIM.StandardGun
+  isLocalPlayer: 0
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 10240
+  tankBrain: {fileID: 0}
+  damage: 379.41
+  range: 1000
+  impactForce: 2000
+  recoilForce: 3000
+  reloadTime: 1.5
+  hitEffectPrefab: {fileID: 1828176872806910, guid: 161a42a00288095469793019a2588899, type: 3}
+  muzzleFlashPrefab: {fileID: 4392389710284111089, guid: 89092ae31b9aba54dbda9415642d0d4a, type: 3}
+  decalPrefab: {fileID: 4075624906338656142, guid: c648d22c74907b040846fd9096ec1983, type: 3}

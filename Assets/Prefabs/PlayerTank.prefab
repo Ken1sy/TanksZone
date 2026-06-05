@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3089221140030187724
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6297810659863949783}
+  m_Layer: 12
+  m_Name: Visuals
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6297810659863949783
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3089221140030187724}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7544109412509219012}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3775286465850185468
 GameObject:
   m_ObjectHideFlags: 0
@@ -17,9 +48,10 @@ GameObject:
   - component: {fileID: 3950555585451684736}
   - component: {fileID: 9033243419864945346}
   - component: {fileID: 6108259022430739499}
+  - component: {fileID: 7910443480525477829}
   - component: {fileID: 3262990353992197911}
   - component: {fileID: 2993312780575648998}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: PlayerTank
   m_TagString: Tank
   m_Icon: {fileID: 0}
@@ -40,6 +72,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1832877088391311503}
+  - {fileID: 6297810659863949783}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1458949029365590633
@@ -83,7 +116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TankChassisController
   groundLayer:
     serializedVersion: 2
-    m_Bits: 10240
+    m_Bits: 6144
   driftMode: 0
   showGizmos: 0
   isLocallyControlled: 0
@@ -243,11 +276,39 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 3262990353992197911}
   _networkObjectCache: {fileID: 3262990353992197911}
-  assembleOnStart: 1
-  manualHullPrefab: {fileID: 487565236925907757, guid: cf95711788731a5449352c6efd11308d, type: 3}
-  manualTurretPrefab: {fileID: 2877250269478108502, guid: f34e416b2b8170e41ba04e76f998bf87, type: 3}
-  manualHullId: Hornet_Standart
-  manualSkinId: nano
+  availableHulls:
+  - id: hull_hornet
+    prefab: {fileID: 487565236925907757, guid: cf95711788731a5449352c6efd11308d, type: 3}
+  - id: hull_dictator
+    prefab: {fileID: 3930232047838067387, guid: 688c5c87844373148bc12a3daec1f4e4, type: 3}
+  - id: hull_hunter
+    prefab: {fileID: 6043102415743083286, guid: fbac4fbfaabf1db47bde25510a6e1297, type: 3}
+  - id: hull_mammonth
+    prefab: {fileID: 1425262865439301572, guid: 2b181d0f3d417c74ab31105930a923c2, type: 3}
+  - id: hull_titan
+    prefab: {fileID: 872612955829252628, guid: f6a4726ff75c59545a614721934b19ec, type: 3}
+  - id: hull_viking
+    prefab: {fileID: 26168058524254157, guid: 749a1aeae51b41a4da9931790d23fdad, type: 3}
+  - id: hull_wasp
+    prefab: {fileID: 6948434838330693646, guid: 8f6b0660401dbd241aef8e9c2a31975c, type: 3}
+  availableTurrets:
+  - id: turret_firebird
+    prefab: {fileID: 6495508089040939462, guid: 957df807e55059c419d7596100d2afd8, type: 3}
+  - id: turret_freeze
+    prefab: {fileID: 8612688960893212170, guid: d7b49672179797d49a3b82715efa8153, type: 3}
+  - id: turret_isida
+    prefab: {fileID: 9059234213588559175, guid: 37a58a1ef4134674c932da439a6cc691, type: 3}
+  - id: turret_railgun
+    prefab: {fileID: 1342528023409473096, guid: e814006ebc97d4444a0262e0fefd7c1d, type: 3}
+  - id: turret_ricochet
+    prefab: {fileID: 4278109648699127865, guid: 473af21de2a15df48bc1afdbe0a598df, type: 3}
+  - id: turret_smoky
+    prefab: {fileID: 7766901300606038106, guid: f80ecec014d24834b9c0c7a619cd401f, type: 3}
+  - id: turret_thunder
+    prefab: {fileID: 2877250269478108502, guid: f34e416b2b8170e41ba04e76f998bf87, type: 3}
+  - id: turret_twins
+    prefab: {fileID: 7669724568244550284, guid: f4c2059a662307248b6455739a31f7e6, type: 3}
+  visualsRoot: {fileID: 6297810659863949783}
 --- !u!114 &3950555585451684736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,6 +328,9 @@ MonoBehaviour:
   turret: {fileID: 0}
   weapon: {fileID: 0}
   camController: {fileID: 0}
+  uiPrefab: {fileID: 478713739463326823, guid: e26c7ea7841db2d43a59f2f89d4dd0db, type: 3}
+  coolingRate: 15
+  maxSpeedPenalty: 0.7
 --- !u!114 &9033243419864945346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -296,6 +360,26 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 3262990353992197911}
   skinTexturePropertyName: _SkinTexture
   skinTilingPropertyName: _SkinTiling
+--- !u!114 &7910443480525477829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775286465850185468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed4225fd4d11fea4188acf60f07db4c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameScripts.Visuals.TankTemperatureVisuals
+  brain: {fileID: 3950555585451684736}
+  colorPropertyName: _TemperatureColor
+  altColorPropertyName: _BaseColor
+  fireColor: {r: 1, g: 0.3, b: 0, a: 1}
+  freezeColor: {r: 0, g: 0.8, b: 1, a: 1}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  useDebugTemperature: 0
+  debugTemperature: 0
 --- !u!114 &3262990353992197911
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,15 +413,15 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584232526576399268
+  _initializedTimestamp: -8584211866959741941
   _localLevelOfDetailCalculationType: 0
   _useLevelOfDetail: 0
   _useRootLevelOfDetail: 1
   NetworkObserver: {fileID: 0}
-  _enablePrediction: 0
-  _predictionType: 0
+  _enablePrediction: 1
+  _predictionType: 1
   _localReconcileCorrectionType: 2
-  _graphicalObject: {fileID: 0}
+  _graphicalObject: {fileID: 6297810659863949783}
   _detachGraphicalObject: 0
   _enableStateForwarding: 1
   _networkTransform: {fileID: 0}
@@ -383,7 +467,7 @@ MonoBehaviour:
   _extrapolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  _clientAuthoritative: 0
+  _clientAuthoritative: 1
   _sendToOwner: 1
   _interval: 1
   _synchronizePosition: 1
@@ -397,7 +481,7 @@ MonoBehaviour:
     X: 0
     Y: 0
     Z: 0
-  _synchronizeScale: 0
+  _synchronizeScale: 1
   _scaleSensitivity: 0.001
   _scaleSnapping:
     X: 0
@@ -415,7 +499,7 @@ GameObject:
   - component: {fileID: 6824259101878778970}
   - component: {fileID: 7717805684681288021}
   - component: {fileID: 6034779985584175469}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -549,7 +633,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3779179063718918759}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: DefaultPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -581,7 +665,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1832877088391311503}
   - component: {fileID: 8096000814759790136}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: FollowingCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -633,5 +717,6 @@ MonoBehaviour:
     m_Bits: 2048
   cameraRadius: 0.3
   collisionOffset: 0.1
+  recoilRecoverySpeed: 15
   follow: 1
   spectatorMode: 0
