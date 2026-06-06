@@ -1,14 +1,13 @@
-using FishNet.Object;
-using FishNet.Object.Synchronizing;
-using UnityEngine;
-using System.Collections.Generic;
 using FishNet.Connection;
 using FishNet.Managing.Scened;
-using UnityEngine.SceneManagement;
-using System.Linq;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using FishNet.Transporting;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
-// НОВОЕ: Структура данных одного игрока в комнате
 [System.Serializable]
 public struct RoomPlayerData
 {
@@ -24,7 +23,7 @@ public struct RoomData
     public int roomId;
     public BattleConfig config;
     public int currentPlayers;
-    public RoomPlayerData[] players; // НОВОЕ: Массив реальных игроков в матче
+    public RoomPlayerData[] players;
 }
 
 public class ServerRoomManager : NetworkBehaviour
@@ -32,30 +31,22 @@ public class ServerRoomManager : NetworkBehaviour
     private static ServerRoomManager _instance;
     public static ServerRoomManager Instance
     {
-        get
-        {
-            if (_instance == null) _instance = FindAnyObjectByType<ServerRoomManager>();
-            return _instance;
-        }
+        get { if (_instance == null) _instance = FindAnyObjectByType<ServerRoomManager>(); return _instance; }
     }
 
     [Header("Настройки")]
     public float emptyRoomTimeout = 600f;
-
     [Header("Сцена и Карты")]
     public string baseBattleScene = "03_BattleMap";
     public List<GameObject> mapPrefabs;
-
     [Header("Игрок")]
     public GameObject playerTankPrefab;
-
     public readonly SyncList<RoomData> activeRooms = new SyncList<RoomData>();
 
     private Dictionary<int, float> emptyRoomTimers = new Dictionary<int, float>();
     private Dictionary<int, Scene> serverRoomScenes = new Dictionary<int, Scene>();
     private Dictionary<NetworkConnection, int> pendingJoins = new Dictionary<NetworkConnection, int>();
     private Dictionary<NetworkConnection, int> connectionToRoom = new Dictionary<NetworkConnection, int>();
-
     private int nextRoomId = 1;
 
     private void Awake()
@@ -66,7 +57,6 @@ public class ServerRoomManager : NetworkBehaviour
             System.Console.InputEncoding = System.Text.Encoding.UTF8;
         }
         catch { }
-
         if (_instance == null) _instance = this;
         else if (_instance != this) Destroy(gameObject);
     }
@@ -113,59 +103,32 @@ public class ServerRoomManager : NetworkBehaviour
             {
                 if (!emptyRoomTimers.ContainsKey(room.roomId)) emptyRoomTimers[room.roomId] = 0f;
                 emptyRoomTimers[room.roomId] += Time.deltaTime;
-
                 if (emptyRoomTimers[room.roomId] >= emptyRoomTimeout)
                 {
                     Debug.Log($"[Server] Комната '{room.config.battleName}' (ID: {room.roomId}) удалена из-за неактивности.");
-
                     if (serverRoomScenes.TryGetValue(room.roomId, out Scene sceneToUnload))
                     {
                         if (sceneToUnload.IsValid() && sceneToUnload.isLoaded)
                             UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneToUnload);
                         serverRoomScenes.Remove(room.roomId);
                     }
-
                     emptyRoomTimers.Remove(room.roomId);
                     activeRooms.RemoveAt(i);
                 }
             }
-            else
-            {
-                if (emptyRoomTimers.ContainsKey(room.roomId)) emptyRoomTimers.Remove(room.roomId);
-            }
+            else { if (emptyRoomTimers.ContainsKey(room.roomId)) emptyRoomTimers.Remove(room.roomId); }
         }
     }
-
-    // ==========================================
-    // СВЯЗЬ С ГАРАЖОМ (КЛИЕНТ)
-    // ==========================================
-    public void RequestCreateRoom(BattleConfig config)
-    {
-        if (!IsSpawned) return;
-        CmdCreateRoom(config);
-    }
-
+    public void RequestCreateRoom(BattleConfig config) { if (!IsSpawned) return; CmdCreateRoom(config); }
     public void RequestJoinRoom(int roomId)
     {
         if (!IsSpawned) return;
-
-        // НОВОЕ: Перед отправкой запроса на сервер, берем свой ник и ранг!
-        // (Мы помним, что твой ранг сохраняется с +1, это учтено)
         string myName = PlayerPrefs.GetString("MyNickname", "Танкист");
         int myRank = PlayerPrefs.GetInt("MyRank", 1);
-
         CmdJoinRoom(roomId, myName, myRank);
     }
+    public void RequestLeaveRoom() { if (!IsSpawned) return; CmdLeaveRoom(); }
 
-    public void RequestLeaveRoom()
-    {
-        if (!IsSpawned) return;
-        CmdLeaveRoom();
-    }
-
-    // ==========================================
-    // СЕРВЕРНЫЕ КОМАНДЫ (SERVER RPC)
-    // ==========================================
     [ServerRpc(RequireOwnership = false)]
     private void CmdCreateRoom(BattleConfig config, NetworkConnection caller = null)
     {
@@ -175,7 +138,7 @@ public class ServerRoomManager : NetworkBehaviour
             roomId = roomId,
             config = config,
             currentPlayers = 0,
-            players = new RoomPlayerData[0] // Инициализируем пустой массив
+            players = new RoomPlayerData[0]
         };
         activeRooms.Add(newRoom);
         Debug.Log($"[Server] Логическая комната '{config.battleName}' создана.");
@@ -191,8 +154,6 @@ public class ServerRoomManager : NetworkBehaviour
             {
                 roomExists = true;
                 RoomData updatedRoom = activeRooms[i];
-
-                // НОВОЕ: Добавляем игрока в массив комнаты
                 var pList = updatedRoom.players != null ? updatedRoom.players.ToList() : new List<RoomPlayerData>();
                 if (!pList.Any(p => p.clientId == caller.ClientId))
                 {
@@ -204,26 +165,21 @@ public class ServerRoomManager : NetworkBehaviour
                         kills = 0
                     });
                 }
-
                 updatedRoom.players = pList.ToArray();
                 updatedRoom.currentPlayers = updatedRoom.players.Length;
                 activeRooms[i] = updatedRoom;
                 break;
             }
         }
-
         if (!roomExists) return;
-
         pendingJoins[caller] = roomId;
         connectionToRoom[caller] = roomId;
-
         bool hasValidScene = false;
         if (serverRoomScenes.TryGetValue(roomId, out Scene existingScene))
         {
             if (existingScene.IsValid() && existingScene.isLoaded) hasValidScene = true;
             else serverRoomScenes.Remove(roomId);
         }
-
         if (hasValidScene)
         {
             string safeName = string.IsNullOrEmpty(existingScene.name) ? baseBattleScene : existingScene.name;
@@ -250,10 +206,8 @@ public class ServerRoomManager : NetworkBehaviour
             connectionToRoom.Remove(caller);
             pendingJoins.Remove(caller);
             RemovePlayerFromRoom(caller, roomId);
-
             NetworkObject[] playerObjs = caller.Objects.ToArray();
             foreach (var netObj in playerObjs) ServerManager.Despawn(netObj);
-
             if (serverRoomScenes.TryGetValue(roomId, out Scene sceneToUnload))
             {
                 if (sceneToUnload.IsValid())
@@ -288,10 +242,6 @@ public class ServerRoomManager : NetworkBehaviour
             }
         }
     }
-
-    // ==========================================
-    // РЕГИСТРАЦИЯ ФРАГОВ (НОВОЕ)
-    // ==========================================
     [Server]
     public void RegisterKill(NetworkConnection killer)
     {
@@ -310,10 +260,9 @@ public class ServerRoomManager : NetworkBehaviour
                         {
                             var pd = pList[pIndex];
                             pd.kills++;
-                            pList[pIndex] = pd; // Обновляем стату игрока
-
+                            pList[pIndex] = pd;
                             updatedRoom.players = pList.ToArray();
-                            activeRooms[i] = updatedRoom; // FishNet мгновенно отправит это в Гараж!
+                            activeRooms[i] = updatedRoom;
                         }
                     }
                     break;
@@ -325,16 +274,15 @@ public class ServerRoomManager : NetworkBehaviour
     private void OnSceneLoadEnd(SceneLoadEndEventArgs args)
     {
         if (!IsServerInitialized) return;
-
         if (args.QueueData.Connections != null && args.QueueData.Connections.Length > 0)
         {
             NetworkConnection caller = args.QueueData.Connections[0];
-
             if (pendingJoins.TryGetValue(caller, out int roomId))
             {
                 Scene targetScene = default;
-
-                if (serverRoomScenes.TryGetValue(roomId, out Scene cachedScene) && cachedScene.IsValid() && cachedScene.isLoaded)
+                if (serverRoomScenes.TryGetValue(roomId, out Scene cachedScene)
+                    && cachedScene.IsValid()
+                    && cachedScene.isLoaded)
                 {
                     targetScene = cachedScene;
                 }
@@ -342,10 +290,8 @@ public class ServerRoomManager : NetworkBehaviour
                 {
                     targetScene = args.LoadedScenes[0];
                     serverRoomScenes[roomId] = targetScene;
-
                     RoomData roomData = activeRooms.FirstOrDefault(r => r.roomId == roomId);
                     GameObject prefabToSpawn = mapPrefabs.FirstOrDefault(p => p.name == roomData.config.mapId);
-
                     if (prefabToSpawn != null)
                     {
                         GameObject mapInstance = Instantiate(prefabToSpawn);
@@ -353,31 +299,19 @@ public class ServerRoomManager : NetworkBehaviour
                         ServerManager.Spawn(mapInstance);
                     }
                 }
-                else
-                {
-                    pendingJoins.Remove(caller);
-                    return;
-                }
-
+                else { pendingJoins.Remove(caller); return; }
                 if (playerTankPrefab != null)
                 {
                     GameObject playerTank = Instantiate(playerTankPrefab);
-
                     if (GameScripts.GameMode.SpawnManager.Instance != null)
                     {
                         Transform safePoint = GameScripts.GameMode.SpawnManager.Instance.GetSafeSpawnPoint();
-                        playerTank.transform.position = safePoint.position + Vector3.up * 2f;
-                        playerTank.transform.rotation = safePoint.rotation;
+                        playerTank.transform.SetPositionAndRotation(safePoint.position + Vector3.up * 2f, safePoint.rotation);
                     }
-                    else
-                    {
-                        playerTank.transform.position = new Vector3(0, 5f, 0);
-                    }
-
+                    else { playerTank.transform.position = new Vector3(0, 5f, 0); }
                     UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(playerTank, targetScene);
                     ServerManager.Spawn(playerTank, caller);
                 }
-
                 TargetRoomSetupComplete(caller);
                 pendingJoins.Remove(caller);
             }
@@ -389,7 +323,6 @@ public class ServerRoomManager : NetworkBehaviour
     {
         Scene garageScene = UnityEngine.SceneManagement.SceneManager.GetSceneByName("02_Garage");
         if (garageScene.isLoaded) UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(garageScene);
-
         for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
         {
             Scene s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);

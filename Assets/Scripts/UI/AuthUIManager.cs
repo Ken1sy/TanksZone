@@ -9,13 +9,11 @@ public class AuthUIManager : MonoBehaviour
     public InputField regEmailInput;
     public InputField regPasswordInput;
     public InputField regPasswordConfirmInput;
-
     [Header("Поля ввода (Логин)")]
     public GameObject loginPanel;
     public InputField loginLoginInput;
     public InputField loginPasswordInput;
     public Toggle rememberMeToggle;
-
     [Header("Вывод ошибок")]
     public Text loginMessageText;
     public Text regMessageText;
@@ -26,42 +24,27 @@ public class AuthUIManager : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
         ShowLoginPanel();
-
-        // НОВОЕ: Проверяем, сохранял ли игрок данные в прошлый раз
         if (PlayerPrefs.HasKey("SavedLogin") && PlayerPrefs.HasKey("SavedPassword"))
         {
             loginLoginInput.text = PlayerPrefs.GetString("SavedLogin");
             loginPasswordInput.text = PlayerPrefs.GetString("SavedPassword");
-
-            if (rememberMeToggle != null)
-            {
-                rememberMeToggle.isOn = true;
-            }
-
-            // Опционально: если хочешь, чтобы игра входила автоматически без нажатия на кнопку,
-            // просто раскомментируй строку ниже:
-            // OnLoginButtonClicked(); 
+            if (rememberMeToggle != null) { rememberMeToggle.isOn = true; }
         }
     }
-
     public void ShowLoginPanel()
     {
         loginPanel.SetActive(true);
         registerPanel.SetActive(false);
         if (loginMessageText != null) loginMessageText.text = "";
     }
-
     public void ShowRegisterPanel()
     {
         loginPanel.SetActive(false);
         registerPanel.SetActive(true);
         if (regMessageText != null) regMessageText.text = "";
     }
-
-    // Кнопка: ЗАРЕГИСТРИРОВАТЬСЯ
     public void OnRegisterButtonClicked()
     {
-        // 1. Проверяем, совпадают ли пароли
         if (regPasswordInput.text != regPasswordConfirmInput.text)
         {
             Debug.Log("Ошибка: Пароли не совпадают!");
@@ -70,10 +53,8 @@ public class AuthUIManager : MonoBehaviour
                 regMessageText.text = "Ошибка: Пароли не совпадают!";
                 regMessageText.color = Color.red;
             }
-            return; // Прерываем регистрацию
+            return;
         }
-
-        // 2. Проверяем длину пароля (PlayFab требует минимум 6 символов)
         if (regPasswordInput.text.Length < 6)
         {
             Debug.Log("Пароль должен быть не менее 6 символов!");
@@ -84,17 +65,13 @@ public class AuthUIManager : MonoBehaviour
             }
             return;
         }
-
         SetButtonsInteractable(false);
-
         Debug.Log("Связь с сервером...");
         if (regMessageText != null)
         {
             regMessageText.text = "Связь с сервером...";
             regMessageText.color = Color.yellow;
         }
-
-        // 4. Отправляем данные в PlayFab
         PlayFabManager.Instance.RegisterUser(
             regLoginInput.text,
             regEmailInput.text,
@@ -112,8 +89,6 @@ public class AuthUIManager : MonoBehaviour
             }
         );
     }
-
-    // Кнопка: ВОЙТИ
     public void OnLoginButtonClicked()
     {
         SetButtonsInteractable(false);
@@ -123,13 +98,11 @@ public class AuthUIManager : MonoBehaviour
             loginMessageText.text = "Авторизация...";
             loginMessageText.color = Color.yellow;
         }
-
         PlayFabManager.Instance.LoginUser(
             loginLoginInput.text,
             loginPasswordInput.text,
             onSuccess: (msg) =>
             {
-                // НОВОЕ: Если галочка стоит - сохраняем данные. Если нет - удаляем из памяти.
                 if (rememberMeToggle != null && rememberMeToggle.isOn)
                 {
                     PlayerPrefs.SetString("SavedLogin", loginLoginInput.text);
@@ -141,7 +114,6 @@ public class AuthUIManager : MonoBehaviour
                     PlayerPrefs.DeleteKey("SavedLogin");
                     PlayerPrefs.DeleteKey("SavedPassword");
                 }
-
                 if (loginMessageText != null) { loginMessageText.text = msg; loginMessageText.color = Color.green; }
             },
             onError: (err) =>
@@ -153,10 +125,5 @@ public class AuthUIManager : MonoBehaviour
     }
 
     private void SetButtonsInteractable(bool state)
-    {
-        foreach (var btn in allButtons)
-        {
-            if (btn != null) btn.interactable = state;
-        }
-    }
+    { foreach (var btn in allButtons) { if (btn != null) btn.interactable = state; } }
 }

@@ -7,16 +7,12 @@ public class TankDebugControls : MonoBehaviour
     [Header("Tanks Zone: Debug")]
     public float teleportHeight = 1.5f;
     public Vector3 defaultSpawnPosition = new Vector3(-20f, 1f, -75f);
-
     [Header("Настройки Спавна")]
     public GameObject dummyTankPrefab;
 
     private Rigidbody rb;
 
-    void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
+    void Awake() { rb = GetComponent<Rigidbody>(); }
 
     void Start()
     {
@@ -32,10 +28,8 @@ public class TankDebugControls : MonoBehaviour
     void Update()
     {
         if (DeveloperConsole.Instance != null && DeveloperConsole.Instance.IsOpen) return;
-
         var keyboard = Keyboard.current;
         if (keyboard == null) return;
-
         if (keyboard.tKey.wasPressedThisFrame) TeleportUp();
         if (keyboard.rKey.wasPressedThisFrame) ResetRotation();
     }
@@ -83,11 +77,8 @@ public class TankDebugControls : MonoBehaviour
             if (float.TryParse(args[0], out float x) &&
                 float.TryParse(args[1], out float y) &&
                 float.TryParse(args[2], out float z))
-            {
-                spawnPos = new Vector3(x, y, z);
-            }
+            { spawnPos = new Vector3(x, y, z); }
         }
-
         Respawn(spawnPos);
         DeveloperConsole.Instance.LogMessage($"Tanks Zone: Танк возрожден на {spawnPos}", Color.cyan);
     }
@@ -99,10 +90,8 @@ public class TankDebugControls : MonoBehaviour
             DeveloperConsole.Instance.LogMessage("Ошибка: Не назначен префаб dummyTankPrefab!", Color.red);
             return;
         }
-
         int count = 1;
         Vector3 startPos = transform.position + transform.forward * 15f;
-
         if (args.Length == 1)
         {
             int.TryParse(args[0], out count);
@@ -120,17 +109,13 @@ public class TankDebugControls : MonoBehaviour
             float.TryParse(args[2], out startPos.z);
             int.TryParse(args[3], out count);
         }
-
         count = Mathf.Clamp(count, 1, 50);
-
         float verticalSpacing = 4f;
-
         for (int i = 0; i < count; i++)
         {
             Vector3 pos = startPos + Vector3.up * (i * verticalSpacing + 2f);
             Instantiate(dummyTankPrefab, pos, transform.rotation * Quaternion.Euler(0, 180, 0));
         }
-
         string msg = count > 1 ? $"Заспавнено {count} ботов столбом!" : "Болванка заспавнена!";
         DeveloperConsole.Instance.LogMessage($"Успех: {msg}", Color.green);
     }

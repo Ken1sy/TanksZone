@@ -13,10 +13,7 @@ public class TrackUVAnimator : MonoBehaviour
 
     void Start()
     {
-        if (trackRenderer != null)
-        {
-            trackMaterial = trackRenderer.materials[materialIndex];
-        }
+        if (trackRenderer != null) { trackMaterial = trackRenderer.materials[materialIndex]; }
         else
         {
             trackRenderer = GetComponent<Renderer>();

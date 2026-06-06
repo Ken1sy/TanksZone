@@ -4,8 +4,7 @@ using UnityEngine;
 public struct TankSettings
 {
     [Header("Боевые характеристики")]
-    public float maxHealth; // ДОБАВЛЕНО: Максимальное здоровье корпуса
-
+    public float maxHealth;
     [Header("Движение")]
     public float speed;
     public float acceleration;
@@ -16,7 +15,6 @@ public struct TankSettings
     public float sideAcceleration;
     public float weight;
     public float damping;
-
     [Header("Подвеска")]
     public float suspensionRayOffsetY;
     public float maxRayLength;
@@ -25,7 +23,6 @@ public struct TankSettings
     public float trackSeparation;
     public float trackLength;
     public float springStiffness;
-
     [Header("Эффекты")]
     public float wobbleFactor;
     public float sideRollFactor;

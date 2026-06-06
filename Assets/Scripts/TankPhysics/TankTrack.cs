@@ -12,11 +12,9 @@ public class TankTrack
         rays.Clear();
         float step = length / (count - 1);
         float startZ = length / 2f;
-
         for (int i = 0; i < count; i++)
         {
             var ray = new SuspensionRay();
-            // Распределяем лучи вдоль гусеницы
             ray.localOrigin = new Vector3(xOffset, yOffset, startZ - (i * step));
             rays.Add(ray);
         }

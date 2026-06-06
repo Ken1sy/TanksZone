@@ -4,8 +4,8 @@ using PlayFab.ClientModels;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GarageUIManager : MonoBehaviour
 {
@@ -15,33 +15,27 @@ public class GarageUIManager : MonoBehaviour
     public GameObject mainUIElement;
     public GarageCamera garageCameraScript;
     public GarageItemsManager itemsManager;
-
-    private bool isMainUIOpen = false;
-
     [Header("UI Элементы Верхней Панели")]
     public TMP_Text xpAndRankText;
     public TMP_Text crystalsText;
     public Slider xpProgressBar;
     public Image rankIconImage;
-
     [Header("Иконки Званий")]
     public Sprite[] rankIcons;
-
     [Header("Настройки и Управление")]
     public GameObject settingsPanel;
     public Image muteButtonImage;
     public Sprite soundOnSprite;
     public Sprite soundOffSprite;
-
     [Header("Новое: Управление Битвами и Сценами")]
     public GameObject battleListPanel;
     public GameObject[] garageOnlyUIElements;
     public GameObject[] battleOnlyUIElements;
     public GameObject exitConfirmationPopup;
-
     public string battleSceneName = "03_BattleMap";
     public string garageSceneName = "02_Garage";
 
+    private bool isMainUIOpen = false;
     private bool isInBattle = false;
     private int currentXp = 0;
     private int crystals = 0;
@@ -64,50 +58,26 @@ public class GarageUIManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            Transform rootObj = transform.root;
-            DontDestroyOnLoad(rootObj.gameObject);
-        }
-        else
-        {
-            Destroy(transform.root.gameObject);
-            return;
-        }
+        if (Instance == null) { Instance = this; Transform rootObj = transform.root; DontDestroyOnLoad(rootObj.gameObject); }
+        else { Destroy(transform.root.gameObject); return; }
     }
-
-    private void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    private void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
+    private void OnEnable() { SceneManager.sceneLoaded += OnSceneLoaded; }
+    private void OnDisable() { SceneManager.sceneLoaded -= OnSceneLoaded; }
     private void Start()
     {
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
-
         if (xpAndRankText != null) xpAndRankText.text = "Загрузка профиля...";
         if (crystalsText != null) crystalsText.text = "...";
         if (xpProgressBar != null) xpProgressBar.value = 0f;
-
         if (settingsPanel != null) settingsPanel.SetActive(false);
         if (exitConfirmationPopup != null) exitConfirmationPopup.SetActive(false);
         if (mainUIElement != null) mainUIElement.SetActive(isMainUIOpen);
-
         SyncMuteIcon(GameScripts.UI.SettingsMenuController.IsMuted);
-
         if (garageCameraScript != null) garageCameraScript.SetUIState(isMainUIOpen);
-
         UpdateUIVisibilityForScene(true);
         LoadPlayerAccountInfo();
     }
-
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         UnityEngine.EventSystems.EventSystem es = FindAnyObjectByType<UnityEngine.EventSystems.EventSystem>();
@@ -117,16 +87,13 @@ public class GarageUIManager : MonoBehaviour
             esObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
             esObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
         }
-
         if (scene.name.Contains(battleSceneName))
         {
             isInBattle = true;
             UpdateUIVisibilityForScene(false);
-
             if (mainUIElement != null) mainUIElement.SetActive(false);
             if (battleListPanel != null) battleListPanel.SetActive(false);
             isMainUIOpen = false;
-
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
@@ -134,15 +101,11 @@ public class GarageUIManager : MonoBehaviour
         {
             isInBattle = false;
             UpdateUIVisibilityForScene(true);
-
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
-
             garageCameraScript = FindAnyObjectByType<GarageCamera>();
             if (garageCameraScript != null) garageCameraScript.SetUIState(isMainUIOpen);
-
             LoadPlayerAccountInfo();
-
             if (itemsManager != null) itemsManager.PopulateGarage(true);
         }
     }
@@ -150,20 +113,9 @@ public class GarageUIManager : MonoBehaviour
     private void UpdateUIVisibilityForScene(bool isGarage)
     {
         if (garageOnlyUIElements != null)
-        {
-            foreach (var el in garageOnlyUIElements)
-            {
-                if (el != null) el.SetActive(isGarage);
-            }
-        }
-
+        { foreach (var el in garageOnlyUIElements) { if (el != null) el.SetActive(isGarage); } }
         if (battleOnlyUIElements != null)
-        {
-            foreach (var el in battleOnlyUIElements)
-            {
-                if (el != null) el.SetActive(!isGarage);
-            }
-        }
+        { foreach (var el in battleOnlyUIElements) { if (el != null) el.SetActive(!isGarage); } }
     }
 
     private void LoadPlayerAccountInfo()
@@ -177,17 +129,14 @@ public class GarageUIManager : MonoBehaviour
                     playerName = result.AccountInfo.Username;
                     if (!string.IsNullOrEmpty(playerName)) FixDisplayNameInDatabase(playerName);
                 }
-
                 PlayerPrefs.SetString("MyNickname", playerName);
                 PlayerPrefs.Save();
-
                 if (string.IsNullOrEmpty(playerName)) playerName = "Без Имени";
                 LoadUserData();
             },
             error =>
             {
-                Debug.LogError("Ошибка получения аккаунта: " + error.ErrorMessage);
-                LoadUserData();
+                Debug.LogError("Ошибка получения аккаунта: " + error.ErrorMessage); LoadUserData();
             }
         );
     }
@@ -212,10 +161,7 @@ public class GarageUIManager : MonoBehaviour
                     crystals = int.Parse(result.Data["Crystals"].Value);
                     UpdateTopPanelUI();
                 }
-                else
-                {
-                    SaveInitialDataForNewPlayer();
-                }
+                else { SaveInitialDataForNewPlayer(); }
             },
             error => Debug.LogError("Ошибка получения данных игрока: " + error.ErrorMessage)
         );
@@ -224,14 +170,7 @@ public class GarageUIManager : MonoBehaviour
     private void SaveInitialDataForNewPlayer()
     {
         var request = new UpdateUserDataRequest
-        {
-            Data = new Dictionary<string, string>
-            {
-                { "XP", "0" },
-                { "Crystals", "5000" }
-            }
-        };
-
+        { Data = new Dictionary<string, string> { { "XP", "0" }, { "Crystals", "5000" } } };
         PlayFabClientAPI.UpdateUserData(request,
             result =>
             {
@@ -246,45 +185,24 @@ public class GarageUIManager : MonoBehaviour
     private void UpdateTopPanelUI()
     {
         if (crystalsText != null) crystalsText.text = crystals.ToString();
-
         int currentRankIndex = 0;
         for (int i = rankXpThresholds.Length - 1; i >= 0; i--)
-        {
-            if (currentXp >= rankXpThresholds[i])
-            {
-                currentRankIndex = i;
-                break;
-            }
-        }
-
+        { if (currentXp >= rankXpThresholds[i]) { currentRankIndex = i; break; } }
         string currentRankName = rankNames[currentRankIndex];
         int currentRankBaseXp = rankXpThresholds[currentRankIndex];
         int nextRankXp = 0;
-
         int expectedRankValue = currentRankIndex + 1;
         PlayerPrefs.SetInt("MyRank", expectedRankValue);
         PlayerPrefs.Save();
-
-        // ИСПРАВЛЕНИЕ 3: Теперь мы оповещаем СВОЙ ТАНК в игре о том, что у нас повысился ранг!
-        if (PlayerTankBrain.LocalInstance != null)
-        {
-            PlayerTankBrain.LocalInstance.CmdUpdateRank(expectedRankValue);
-        }
-
+        if (PlayerTankBrain.LocalInstance != null) { PlayerTankBrain.LocalInstance.CmdUpdateRank(expectedRankValue); }
         if (currentRankIndex < rankXpThresholds.Length - 1) nextRankXp = rankXpThresholds[currentRankIndex + 1];
         else nextRankXp = currentXp;
-
-        if (xpAndRankText != null)
-        {
-            xpAndRankText.text = $"{currentXp} / {nextRankXp} {currentRankName} {playerName}";
-        }
-
+        if (xpAndRankText != null) { xpAndRankText.text = $"{currentXp} / {nextRankXp} {currentRankName} {playerName}"; }
         if (rankIconImage != null && rankIcons != null && rankIcons.Length > 0)
         {
             int iconIndex = Mathf.Clamp(currentRankIndex, 0, rankIcons.Length - 1);
             if (rankIcons[iconIndex] != null) rankIconImage.sprite = rankIcons[iconIndex];
         }
-
         if (xpProgressBar != null)
         {
             if (currentRankIndex >= rankXpThresholds.Length - 1) xpProgressBar.value = 1f;
@@ -302,16 +220,10 @@ public class GarageUIManager : MonoBehaviour
         currentXp += xpAdded;
         crystals += crystalsAdded;
         UpdateTopPanelUI();
-
         var request = new UpdateUserDataRequest
         {
-            Data = new Dictionary<string, string>
-            {
-                { "XP", currentXp.ToString() },
-                { "Crystals", crystals.ToString() }
-            }
+            Data = new Dictionary<string, string> { { "XP", currentXp.ToString() }, { "Crystals", crystals.ToString() } }
         };
-
         PlayFabClientAPI.UpdateUserData(request,
             res => Debug.Log($"[Бой] Вы уничтожили танк! Получено {xpAdded} опыта и {crystalsAdded} крис."),
             err => Debug.LogError("[Бой] Ошибка сохранения наград: " + err.ErrorMessage)
@@ -324,17 +236,12 @@ public class GarageUIManager : MonoBehaviour
         {
             crystals -= amount;
             UpdateTopPanelUI();
-
             var request = new UpdateUserDataRequest
-            {
-                Data = new Dictionary<string, string> { { "Crystals", crystals.ToString() } }
-            };
-
+            { Data = new Dictionary<string, string> { { "Crystals", crystals.ToString() } } };
             PlayFabClientAPI.UpdateUserData(request,
                 res => Debug.Log($"Успешное списание в PlayFab! Осталось кристаллов: {crystals}"),
                 err => Debug.LogError("Ошибка синхронизации баланса: " + err.ErrorMessage)
             );
-
             return true;
         }
         return false;
@@ -365,27 +272,14 @@ public class GarageUIManager : MonoBehaviour
         {
             bool willBeOpen = !settingsPanel.activeSelf;
             settingsPanel.SetActive(willBeOpen);
-
-            if (willBeOpen)
-            {
-                // ИСПРАВЛЕНИЕ 2: Выдвигаем панель настроек на самый передний план (поверх всех ХП)
-                settingsPanel.transform.SetAsLastSibling();
-            }
-
+            if (willBeOpen) { settingsPanel.transform.SetAsLastSibling(); }
             if (isInBattle)
             {
-                if (willBeOpen)
-                {
-                    Cursor.visible = true;
-                    Cursor.lockState = CursorLockMode.None;
-                }
+                if (willBeOpen) { Cursor.visible = true; Cursor.lockState = CursorLockMode.None; }
                 else
                 {
                     if (exitConfirmationPopup == null || !exitConfirmationPopup.activeSelf)
-                    {
-                        Cursor.visible = false;
-                        Cursor.lockState = CursorLockMode.Locked;
-                    }
+                    { Cursor.visible = false; Cursor.lockState = CursorLockMode.Locked; }
                 }
             }
         }
@@ -399,9 +293,7 @@ public class GarageUIManager : MonoBehaviour
     public void SyncMuteIcon(bool isMutedState)
     {
         if (muteButtonImage != null && soundOnSprite != null && soundOffSprite != null)
-        {
-            muteButtonImage.sprite = isMutedState ? soundOffSprite : soundOnSprite;
-        }
+        { muteButtonImage.sprite = isMutedState ? soundOffSprite : soundOnSprite; }
     }
 
     public void OnQuitButtonPressed()
@@ -411,9 +303,7 @@ public class GarageUIManager : MonoBehaviour
             if (exitConfirmationPopup != null)
             {
                 exitConfirmationPopup.SetActive(true);
-                // На всякий случай попап выхода тоже выдвигаем вперед
                 exitConfirmationPopup.transform.SetAsLastSibling();
-
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
             }
@@ -432,14 +322,9 @@ public class GarageUIManager : MonoBehaviour
     public void CancelExitBattle()
     {
         if (exitConfirmationPopup != null) exitConfirmationPopup.SetActive(false);
-
         if (settingsPanel == null || !settingsPanel.activeSelf)
-        {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-        }
+        { Cursor.visible = false; Cursor.lockState = CursorLockMode.Locked; }
     }
-
     public void QuitGame()
     {
         Application.Quit();

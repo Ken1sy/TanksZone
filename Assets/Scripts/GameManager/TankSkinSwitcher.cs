@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using FishNet.Object;
 using UnityEngine;
 
@@ -12,7 +11,6 @@ public class TankSkinSwitcher : NetworkBehaviour
     private Renderer turretRenderer;
     private Material hullMaterial;
     private Material turretMaterial;
-
     private TankSkinConfig[] allSkinConfigs;
     private int currentIndex = 0;
     private bool isLocalPlayer = false;
@@ -20,9 +18,7 @@ public class TankSkinSwitcher : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
-
         isLocalPlayer = base.IsOwner;
-
         if (isLocalPlayer && DeveloperConsole.Instance != null)
         {
             DeveloperConsole.Instance.AddCommand("setskin", CmdSetSkin);
@@ -37,22 +33,16 @@ public class TankSkinSwitcher : NetworkBehaviour
     {
         hullRenderer = hullRend;
         turretRenderer = turretRend;
-
         if (hullRenderer != null) hullMaterial = hullRenderer.material;
         if (turretRenderer != null) turretMaterial = turretRenderer.material;
-
         LoadAllSkinsForTesting();
-        if (allSkinConfigs != null && allSkinConfigs.Length > 0)
-        {
-            ApplyConfig(allSkinConfigs[currentIndex]);
-        }
+        if (allSkinConfigs != null && allSkinConfigs.Length > 0) { ApplyConfig(allSkinConfigs[currentIndex]); }
     }
 
     public void ApplySkinById(string skinId)
     {
         string path = $"Colormap/{skinId}/{skinId}_Config";
         TankSkinConfig config = Resources.Load<TankSkinConfig>(path);
-
         if (config != null)
         {
             ApplyConfig(config);
@@ -63,14 +53,12 @@ public class TankSkinSwitcher : NetworkBehaviour
     private void ApplyConfig(TankSkinConfig config)
     {
         if (config == null) return;
-
         if (hullRenderer != null && hullMaterial != null)
         {
             float hullSize = Mathf.Max(hullRenderer.bounds.size.x, hullRenderer.bounds.size.z);
             Vector2 autoTiling = new Vector2(config.baseTiling * hullSize, config.baseTiling * hullSize);
             UpdateMaterial(hullMaterial, config, autoTiling);
         }
-
         if (turretRenderer != null && turretMaterial != null)
         {
             float turretSize = Mathf.Max(turretRenderer.bounds.size.x, turretRenderer.bounds.size.z);
@@ -100,7 +88,8 @@ public class TankSkinSwitcher : NetworkBehaviour
     private void CmdSetTiling(string[] args)
     {
         if (args.Length == 0) return;
-        if (float.TryParse(args[0].Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float val))
+        if (float.TryParse(args[0].Replace(',', '.'),
+            System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float val))
         {
             allSkinConfigs[currentIndex].baseTiling = val;
             SaveConfig(allSkinConfigs[currentIndex]);
@@ -111,7 +100,8 @@ public class TankSkinSwitcher : NetworkBehaviour
     private void CmdSetAnimSpeed(string[] args)
     {
         if (args.Length == 0) return;
-        if (float.TryParse(args[0].Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float val))
+        if (float.TryParse(args[0].Replace(',', '.'),
+            System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float val))
         {
             allSkinConfigs[currentIndex].animationSpeed = val;
             SaveConfig(allSkinConfigs[currentIndex]);
@@ -158,7 +148,6 @@ public class TankSkinSwitcher : NetworkBehaviour
         if (!isLocalPlayer) return;
         if (DeveloperConsole.Instance != null && DeveloperConsole.Instance.IsOpen) return;
         if (allSkinConfigs == null || allSkinConfigs.Length == 0) return;
-
         if (Input.GetKeyDown(KeyCode.RightBracket))
         {
             currentIndex++;
@@ -171,7 +160,6 @@ public class TankSkinSwitcher : NetworkBehaviour
             if (currentIndex < 0) currentIndex = allSkinConfigs.Length - 1;
             ApplyConfig(allSkinConfigs[currentIndex]);
         }
-
         if (Input.GetKeyDown(KeyCode.F5)) ApplyConfig(allSkinConfigs[currentIndex]);
     }
 }

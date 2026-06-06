@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.IO;
+using UnityEngine;
 
 public class JsonHotReloader : MonoBehaviour
 {
@@ -11,65 +11,31 @@ public class JsonHotReloader : MonoBehaviour
     void Start()
     {
         controller = GetComponent<TankChassisController>();
-
-        // Формируем путь к файлу (например, Hornet.json)
-        // Если вы используете TankSetupData для выбора корпуса:
         string fileName = TankSetupData.SelectedHullID + ".cfg";
         filePath = Path.Combine(Application.streamingAssetsPath, "Configs", fileName);
-
-        if (File.Exists(filePath))
-        {
-            SetupWatcher();
-        }
+        if (File.Exists(filePath)) SetupWatcher();
     }
 
     private void SetupWatcher()
     {
-        // Настраиваем слежку за конкретной папкой
         watcher = new FileSystemWatcher();
         watcher.Path = Path.GetDirectoryName(filePath);
         watcher.Filter = Path.GetFileName(filePath);
-
-        // На какие изменения реагировать
         watcher.NotifyFilter = NotifyFilters.LastWrite;
-
-        // Подписываемся на событие изменения
         watcher.Changed += (s, e) => fileChanged = true;
-
         watcher.EnableRaisingEvents = true;
-        Debug.Log($"<color=cyan>Слежу за изменениями в {watcher.Filter}...</color>");
     }
-
-    void Update()
-    {
-        // Проверяем флаг в главном потоке Unity
-        if (fileChanged)
-        {
-            fileChanged = false;
-            ReloadSettings();
-        }
-    }
-
+    void Update() { if (fileChanged) { fileChanged = false; ReloadSettings(); } }
     private void ReloadSettings()
     {
         try
         {
-            // Небольшая задержка, чтобы файл успел "освободиться" после сохранения в Windows
             System.Threading.Thread.Sleep(50);
-
             string jsonText = File.ReadAllText(filePath);
             TankSettings newSettings = JsonUtility.FromJson<TankSettings>(jsonText);
-
-            if (controller != null)
-            {
-                controller.ApplySettings(newSettings);
-                Debug.Log("<color=green>Параметры танка обновлены из JSON!</color>");
-            }
+            if (controller != null) controller.ApplySettings(newSettings);
         }
-        catch (System.Exception e)
-        {
-            Debug.LogError("Ошибка при горячей перезагрузке: " + e.Message);
-        }
+        catch (System.Exception e) { Debug.LogError("Ошибка при перезагрузке: " + e.Message); }
     }
 
     private void OnDestroy()

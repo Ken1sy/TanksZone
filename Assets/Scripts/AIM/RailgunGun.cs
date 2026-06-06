@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using FishNet.Object;
+﻿using FishNet.Object;
+using System.Collections;
 using UnityEngine;
 
 namespace GameScripts.AIM
@@ -8,8 +8,7 @@ namespace GameScripts.AIM
     {
         [Header("Railgun Settings")]
         public float chargeTime = 1.1f;
-        public float reloadTime = 2.0f; // Пауза ПОСЛЕ выстрела
-
+        public float reloadTime = 2.0f;
         [Header("Railgun Visuals")]
         public RailgunHybridBeam beamPrefab;
         public RailgunChargeEffect chargeController;
@@ -21,30 +20,17 @@ namespace GameScripts.AIM
 
         public override void ProcessInput(bool isShootingHeld)
         {
-            if (isShootingHeld && !_isCharging && Time.time >= _nextFireTime)
-            {
-                StartCoroutine(FireSequence());
-            }
+            if (isShootingHeld && !_isCharging && Time.time >= _nextFireTime) { StartCoroutine(FireSequence()); }
         }
 
         private IEnumerator FireSequence()
         {
             _isCharging = true;
-
-            // Локальный эффект заряда
             if (chargeController != null) chargeController.StartCharge(chargeTime);
-
-            // Сообщаем другим игрокам, что мы начали заряжаться (чтобы они видели свечение)
             tankBrain.CmdSubmitChargeStart();
-
-            // Ждем зарядку
             yield return new WaitForSeconds(chargeTime);
-
             if (chargeController != null) chargeController.FinishCharge();
-
-            // Совершаем сам выстрел
             FireHitscan();
-
             _isCharging = false;
             _nextFireTime = Time.time + reloadTime;
         }
@@ -52,17 +38,11 @@ namespace GameScripts.AIM
         private void FireHitscan()
         {
             if (muzzlePoint == null) return;
-
             Vector3 aimDirection = smartAim.GetAimDirection(transform, muzzlePoint, out bool isBlocked).normalized;
             ExecuteHitscanShot(aimDirection, isBlocked, out NetworkObject hitNetObj, out Vector3 hitPoint);
-
             ApplyRecoil();
             tankBrain.CmdSubmitHitscanShoot(aimDirection, isBlocked, hitNetObj, hitPoint);
         }
-
-        // ==========================================
-        // СЕТЕВЫЕ ВИЗУАЛЫ ДЛЯ ДРУГИХ ИГРОКОВ
-        // ==========================================
 
         public void PerformRemoteCharge()
         {
@@ -88,13 +68,11 @@ namespace GameScripts.AIM
         {
             hitNetObj = null; hitPoint = Vector3.zero;
             PhysicsScene roomPhysics = gameObject.scene.GetPhysicsScene();
-
             if (isBlocked)
             {
                 Vector3 impactPos = muzzlePoint.position;
                 Vector3 impactNormal = -muzzlePoint.forward;
                 Transform targetTransform = null;
-
                 Vector3 dir = muzzlePoint.position - transform.position;
                 if (roomPhysics.Raycast(transform.position, dir.normalized, out RaycastHit blockHit, dir.magnitude, hitMask))
                 {
@@ -132,7 +110,6 @@ namespace GameScripts.AIM
         private void SpawnHitVisuals(Vector3 pos, Vector3 normal, Transform parent)
         {
             if (impactEffectPrefab != null) Instantiate(impactEffectPrefab, pos, Quaternion.LookRotation(normal));
-
             if (decalPrefab != null && parent != null)
             {
                 Vector3 safePosition = pos + normal * 0.02f;
@@ -145,9 +122,8 @@ namespace GameScripts.AIM
 
         public override float GetReloadProgress()
         {
-            if (_isCharging) return 0f; // Во время зарядки луча считаем оружие полностью пустым
+            if (_isCharging) return 0f;
             if (Time.time >= _nextFireTime) return 1f;
-
             float remaining = _nextFireTime - Time.time;
             return Mathf.Clamp01(1f - (remaining / reloadTime));
         }
